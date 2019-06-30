@@ -6,12 +6,12 @@ import java.math.BigDecimal;
 import java.math.MathContext;
 import java.math.RoundingMode;
 
-public class Conversion {
+public class Converter {
 
     private static final MathContext mc = new MathContext(6, RoundingMode.HALF_EVEN);
     private final Rates rates;
 
-    public Conversion(Rates rates) {
+    public Converter(Rates rates) {
         this.rates = rates;
     }
 

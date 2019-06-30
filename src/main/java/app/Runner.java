@@ -1,6 +1,6 @@
 package app;
 
-import service.Conversion;
+import service.Converter;
 import service.RateGetter;
 import data.Rates;
 
@@ -10,7 +10,7 @@ public class Runner {
 
     public static void main(String[] args) {
         Rates rates = new Rates();
-        Conversion conversion = new Conversion(rates);
+        Converter conversion = new Converter(rates);
         new RateGetter().getRates(rates);
 
         System.out.println(conversion.convert("GBP", "USD", BigDecimal.TEN));
