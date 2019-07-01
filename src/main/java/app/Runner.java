@@ -10,10 +10,13 @@ public class Runner {
 
     public static void main(String[] args) {
         Rates rates = new Rates();
-        Converter conversion = new Converter(rates);
+        Converter converter = new Converter(rates);
         new RateGetter().getRates(rates);
 
-        System.out.println(conversion.convert("GBP", "USD", BigDecimal.TEN));
+        // test cases
+        System.out.println(converter.convert("GBP", "USD", BigDecimal.TEN));
+        System.out.println(converter.convert("GBP", "GBP", BigDecimal.TEN));
+        //System.out.println(converter.convert("EUR", "GBP", BigDecimal.TEN)); // fails with null pointer exception
     }
 
 }
