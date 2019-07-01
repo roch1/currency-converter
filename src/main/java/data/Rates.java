@@ -1,5 +1,6 @@
 package data;
 
+import model.Rate;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
@@ -18,29 +19,30 @@ import java.util.Map;
 
 public class Rates {
 
-    private final Map<Currency, BigDecimal> rates = new HashMap<>();
-    private LocalDate lastUpdated = LocalDate.now().minusDays(10); // for testing the first time program runs, need to update this variable every time a file is download
+    private final Map<String, Rate> rates = new HashMap<>();
+    private LocalDate lastUpdated = LocalDate.now().minusDays(10);
 
-    public BigDecimal getRate(String currencyCode) {
-        Currency currency = Currency.getInstance(currencyCode);
-        return rates.get(currency);
+    public Rate getRate(String currencyCode) {
+        return rates.get(currencyCode);
     }
 
-    public void parse(File file) {
+    public void parse(File ratesFile) {
         DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
         try {
             dbf.setFeature("http://apache.org/xml/features/nonvalidating/load-dtd-grammar", false);
             dbf.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false);
 
             DocumentBuilder docbuilder = dbf.newDocumentBuilder();
-            Document doc = docbuilder.parse(file);
+            Document doc = docbuilder.parse(ratesFile);
             doc.getDocumentElement().normalize();
 
             NodeList nodeList = doc.getElementsByTagName("Cube");
             for (int i = 0; i < nodeList.getLength(); i++) {
                 Element e = (Element) nodeList.item(i);
                 if (e.hasAttribute("currency")) {
-                    rates.put(Currency.getInstance(e.getAttribute("currency")), new BigDecimal(e.getAttribute("rate")));
+                    String currencyCode = e.getAttribute("currency");
+                    String fxRate = e.getAttribute("rate");
+                    rates.put(currencyCode, new Rate(Currency.getInstance(currencyCode), new BigDecimal(fxRate)));
                 }
             }
         } catch (ParserConfigurationException | IOException | SAXException e) {
@@ -56,8 +58,8 @@ public class Rates {
         this.lastUpdated = lastUpdated;
     }
 
-    private void putRate(Currency currency, BigDecimal rate) {
-        rates.put(currency, rate);
+    private void putRate(String currencyCode, Rate rate) {
+        rates.put(currencyCode, rate);
     }
 
 }
