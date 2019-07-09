@@ -3,7 +3,8 @@ package model;
 import java.math.BigDecimal;
 import java.util.Objects;
 
-public class ConverterResponse {
+// value type
+public final class ConverterResponse {
 
     private final String sourceCurrCode;
     private final String targetCurrCode;
