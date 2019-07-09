@@ -1,8 +1,9 @@
 package app;
 
-import service.Converter;
-import service.RateGetter;
 import data.Rates;
+import service.Converter;
+import service.RateScheduler;
+import service.RateGetter;
 
 import java.math.BigDecimal;
 
@@ -10,13 +11,17 @@ public class Runner {
 
     public static void main(String[] args) {
         Rates rates = new Rates();
-        Converter converter = new Converter(rates);
-        new RateGetter().getRates(rates);
+        RateGetter rateGetter = new RateGetter();
 
+        RateScheduler runner = new RateScheduler(rates, rateGetter);
+        runner.startScheduling(); // task should run as soon application starts up, and then subsequently according to delay
+
+        Converter converter = new Converter();
         // test cases
-        System.out.println(converter.convert("GBP", "USD", BigDecimal.TEN));
-        System.out.println(converter.convert("GBP", "GBP", BigDecimal.TEN));
+        System.out.println(converter.convert(rates.getRate("GBP"), rates.getRate("USD"), BigDecimal.TEN));
+        System.out.println(converter.convert(rates.getRate("GBP"), rates.getRate("GBP"), BigDecimal.TEN));
         //System.out.println(converter.convert("EUR", "GBP", BigDecimal.TEN)); // fails with null pointer exception
+
     }
 
 }

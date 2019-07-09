@@ -4,7 +4,8 @@ import java.math.BigDecimal;
 import java.util.Currency;
 import java.util.Objects;
 
-public class Rate {
+// value type
+public final class Rate {
 
     private final Currency currency;
     private final BigDecimal fxRate;
