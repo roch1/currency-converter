@@ -58,6 +58,10 @@ public class Rates {
         this.lastUpdated = lastUpdated;
     }
 
+    public boolean empty() {
+        return rates.isEmpty();
+    }
+
     private void putRate(String currencyCode, Rate rate) {
         rates.put(currencyCode, rate);
     }
