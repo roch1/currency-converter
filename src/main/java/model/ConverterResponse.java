@@ -9,18 +9,17 @@ public final class ConverterResponse {
     private final String sourceCurrCode;
     private final String targetCurrCode;
     private final BigDecimal sourceAmount;
-    private final String sourceToTargetFxRate;
     private final BigDecimal convertedAmount;
+    private final String sourceToTargetFxRate;
     private final String sourceDisplayName;
     private final String targetDisplayName;
 
-    public ConverterResponse(String sourceCurrCode, String targetCurrCode, BigDecimal sourceAmount, String sourceToTargetFxRate,
-                             BigDecimal convertedAmount, String sourceDisplayName, String targetDisplayName) {
+    public ConverterResponse(String sourceCurrCode, String targetCurrCode, BigDecimal sourceAmount, BigDecimal convertedAmount, String sourceToTargetFxRate, String sourceDisplayName, String targetDisplayName) {
         this.sourceCurrCode = sourceCurrCode;
         this.targetCurrCode = targetCurrCode;
         this.sourceAmount = sourceAmount;
-        this.sourceToTargetFxRate = sourceToTargetFxRate;
         this.convertedAmount = convertedAmount;
+        this.sourceToTargetFxRate = sourceToTargetFxRate;
         this.sourceDisplayName = sourceDisplayName;
         this.targetDisplayName = targetDisplayName;
     }
@@ -31,8 +30,8 @@ public final class ConverterResponse {
                 "sourceCurrCode='" + sourceCurrCode + '\'' +
                 ", targetCurrCode='" + targetCurrCode + '\'' +
                 ", sourceAmount=" + sourceAmount +
-                ", sourceToTargetFxRate='" + sourceToTargetFxRate + '\'' +
                 ", convertedAmount=" + convertedAmount +
+                ", sourceToTargetFxRate='" + sourceToTargetFxRate + '\'' +
                 ", sourceDisplayName='" + sourceDisplayName + '\'' +
                 ", targetDisplayName='" + targetDisplayName + '\'' +
                 '}';

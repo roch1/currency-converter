@@ -1,22 +1,33 @@
 package model;
 
 import java.math.BigDecimal;
-import java.util.Currency;
 import java.util.Objects;
 
 // value type
 public final class Rate {
 
-    private final Currency currency;
+    private final String currencyCode;
+    private final String symbol;
+    private final String displayName;
     private final BigDecimal fxRate;
 
-    public Rate(Currency currency, BigDecimal fxRate) {
-        this.currency = currency;
+    public Rate(String currencyCode, String symbol, String displayName, BigDecimal fxRate) {
+        this.currencyCode = currencyCode;
+        this.symbol = symbol;
+        this.displayName = displayName;
         this.fxRate = fxRate;
     }
 
-    public Currency getCurrency() {
-        return currency;
+    public String getCurrencyCode() {
+        return currencyCode;
+    }
+
+    public String getSymbol() {
+        return symbol;
+    }
+
+    public String getDisplayName() {
+        return displayName;
     }
 
     public BigDecimal getFxRate() {
@@ -26,7 +37,9 @@ public final class Rate {
     @Override
     public String toString() {
         return "Rate{" +
-                "currency=" + currency +
+                "currencyCode='" + currencyCode + '\'' +
+                ", symbol='" + symbol + '\'' +
+                ", displayName='" + displayName + '\'' +
                 ", fxRate=" + fxRate +
                 '}';
     }
@@ -36,13 +49,15 @@ public final class Rate {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Rate rate = (Rate) o;
-        return currency.equals(rate.currency) &&
-                fxRate.equals(rate.fxRate);
+        return Objects.equals(currencyCode, rate.currencyCode) &&
+                Objects.equals(symbol, rate.symbol) &&
+                Objects.equals(displayName, rate.displayName) &&
+                Objects.equals(fxRate, rate.fxRate);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(currency, fxRate);
+        return Objects.hash(currencyCode, symbol, displayName, fxRate);
     }
 
 }

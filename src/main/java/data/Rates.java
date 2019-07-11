@@ -42,7 +42,7 @@ public class Rates {
                 if (e.hasAttribute("currency")) {
                     String currencyCode = e.getAttribute("currency");
                     String fxRate = e.getAttribute("rate");
-                    rates.put(currencyCode, new Rate(Currency.getInstance(currencyCode), new BigDecimal(fxRate)));
+                    rates.put(currencyCode, createRate(currencyCode, fxRate));
                 }
             }
         } catch (ParserConfigurationException | IOException | SAXException e) {
@@ -60,6 +60,11 @@ public class Rates {
 
     public boolean empty() {
         return rates.isEmpty();
+    }
+
+    private Rate createRate(String currencyCode, String fxRate) {
+        Currency currency = Currency.getInstance(currencyCode);
+        return new Rate(currencyCode, currency.getSymbol(), currency.getDisplayName(), new BigDecimal(fxRate));
     }
 
     private void putRate(String currencyCode, Rate rate) {
