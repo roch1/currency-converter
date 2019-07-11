@@ -29,6 +29,7 @@ public class RateScheduler {
         // rates should be populated as soon application starts up (only once), and then subsequently according to delay
         if (rates.empty()) {
             rateGetter.getRates(rates);
+            rates.putRate("EUR", "1"); // add base rate EUR to rates
         }
 
         scheduleTask(task());
