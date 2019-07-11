@@ -24,7 +24,6 @@ public class RateGetter {
     private static final String DAILY_RATES_URL = "https://www.ecb.europa.eu/stats/eurofxref/eurofxref-daily.xml";
     private static final String FILE_NAME = ".\\src\\main\\resources\\rates\\daily_fx_rates.xml";
 
-    // turn this into a scheduled task
     public void getRates(Rates rates) {
         try {
             final URL dailyRatesUrl = new URL(DAILY_RATES_URL);
