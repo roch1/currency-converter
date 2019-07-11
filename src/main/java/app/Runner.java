@@ -17,10 +17,11 @@ public class Runner {
         runner.startScheduling();
 
         Converter converter = new Converter();
+
         // test cases
         System.out.println(converter.convert(rates.getRate("GBP"), rates.getRate("USD"), BigDecimal.TEN));
         System.out.println(converter.convert(rates.getRate("GBP"), rates.getRate("GBP"), BigDecimal.TEN));
-        //System.out.println(converter.convert("EUR", "GBP", BigDecimal.TEN)); // fails with null pointer exception
+        System.out.println(converter.convert(rates.getRate("EUR"), rates.getRate("GBP"), BigDecimal.TEN));
 
     }
 
