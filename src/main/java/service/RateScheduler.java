@@ -15,7 +15,7 @@ import java.util.concurrent.TimeUnit;
 public class RateScheduler {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(RateScheduler.class);
-    private static final ScheduledExecutorService executorService = Executors.newSingleThreadScheduledExecutor();
+    private static final ScheduledExecutorService EXECUTOR_SERVICE = Executors.newSingleThreadScheduledExecutor();
 
     private final Rates rates;
     private final RateGetter rateGetter;
@@ -26,6 +26,11 @@ public class RateScheduler {
     }
 
     public void startScheduling() {
+        // rates should be populated as soon application starts up (only once), and then subsequently according to delay
+        if (rates.empty()) {
+            rateGetter.getRates(rates);
+        }
+
         scheduleTask(task());
     }
 
@@ -38,7 +43,7 @@ public class RateScheduler {
 
     private void scheduleTask(Runnable task) {
         long interval = getInterval();
-        executorService.schedule(task, interval, TimeUnit.SECONDS);
+        EXECUTOR_SERVICE.schedule(task, interval, TimeUnit.SECONDS);
     }
 
     private long getInterval() {

@@ -14,7 +14,7 @@ public class Runner {
         RateGetter rateGetter = new RateGetter();
 
         RateScheduler runner = new RateScheduler(rates, rateGetter);
-        runner.startScheduling(); // task should run as soon application starts up, and then subsequently according to delay
+        runner.startScheduling();
 
         Converter converter = new Converter();
         // test cases
