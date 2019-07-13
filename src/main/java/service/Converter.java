@@ -1,5 +1,6 @@
 package service;
 
+import data.Rates;
 import model.ConverterResponse;
 import model.Rate;
 import org.slf4j.Logger;
@@ -13,12 +14,17 @@ public class Converter {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(Converter.class);
     private static final MathContext MC = new MathContext(10, RoundingMode.HALF_EVEN);
+    private final Rates rates;
 
-    public ConverterResponse convert(Rate eur2Source, Rate eur2Target, BigDecimal amount) {
-        BigDecimal converted = convert(eur2Source.getFxRate(), eur2Target.getFxRate(), amount);
+    public Converter(Rates rates) {
+        this.rates = rates;
+    }
 
-        String sourceCurrCode = eur2Source.getCurrencyCode();
-        String targetCurrCode = eur2Target.getCurrencyCode();
+    public ConverterResponse convert(String sourceCurrCode, String targetCurrCode, BigDecimal amount) {
+        Rate eur2Source = rates.getCurrency(sourceCurrCode);
+        Rate eur2Target = rates.getCurrency(targetCurrCode);
+
+        BigDecimal converted = convert(rates.getRate(eur2Source), rates.getRate(eur2Target), amount);
 
         String source2TargetFxRate = String.format("1 %s = %.6f %s",
                 sourceCurrCode, converted.divide(amount, MC), targetCurrCode);

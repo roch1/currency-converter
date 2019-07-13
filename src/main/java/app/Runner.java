@@ -16,12 +16,12 @@ public class Runner {
         RateScheduler runner = new RateScheduler(rates, rateGetter);
         runner.startScheduling();
 
-        Converter converter = new Converter();
+        Converter converter = new Converter(rates);
 
         // test cases
-        System.out.println(converter.convert(rates.getRate("GBP"), rates.getRate("USD"), BigDecimal.TEN));
-        System.out.println(converter.convert(rates.getRate("GBP"), rates.getRate("GBP"), BigDecimal.TEN));
-        System.out.println(converter.convert(rates.getRate("EUR"), rates.getRate("GBP"), BigDecimal.TEN));
+        System.out.println(converter.convert("GBP", "USD", BigDecimal.TEN));
+        System.out.println(converter.convert("GBP", "GBP", BigDecimal.TEN));
+        System.out.println(converter.convert("EUR", "GBP", BigDecimal.TEN));
 
     }
 

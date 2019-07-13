@@ -69,7 +69,7 @@ public class RateGetter {
         long bytesTransferred = 0;
         try (ReadableByteChannel rbc = Channels.newChannel(dailyRates.openStream());
              FileOutputStream fos = new FileOutputStream(file)) {
-            LOGGER.info("start downloading new rates file");
+            LOGGER.info("downloading new rates file");
             bytesTransferred = fos.getChannel().transferFrom(rbc, 0, Long.MAX_VALUE);
             LOGGER.info("new rates file downloaded");
         } catch (IOException e) {
