@@ -1,6 +1,8 @@
 package data;
 
 import model.Rate;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
@@ -16,15 +18,16 @@ import java.time.LocalDate;
 import java.util.Currency;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 
 public class Rates {
 
-    private final Map<String, Rate> rates = new HashMap<>();
-    private LocalDate lastUpdated = LocalDate.now().minusDays(10);
-
-    public Rate getRate(String currencyCode) {
-        return rates.get(currencyCode);
-    }
+    private static final Logger LOGGER = LoggerFactory.getLogger(Rates.class);
+    private static final int INITIAL_CAPACITY = 32;
+    private static final ConcurrentMap<String, Rate> INSTANCES = new ConcurrentHashMap<>(INITIAL_CAPACITY);
+    private final Map<Rate, BigDecimal> rates = new HashMap<>(INITIAL_CAPACITY);
+    private LocalDate lastUpdated = LocalDate.now().minusDays(4);
 
     public void parse(File ratesFile) {
         DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
@@ -63,12 +66,28 @@ public class Rates {
     }
 
     public void putRate(String currencyCode, String fxRate) {
-        rates.put(currencyCode, createRate(currencyCode, fxRate));
+        rates.put(getCurrency(currencyCode), new BigDecimal(fxRate));
     }
 
-    private Rate createRate(String currencyCode, String fxRate) {
+    public Rate getCurrency(String currencyCode) {
+        Rate instance = INSTANCES.get(currencyCode);
+        if (instance != null) {
+            return instance;
+        }
+
+        return createRate(currencyCode);
+    }
+
+    public BigDecimal getRate(Rate rate) {
+        return rates.get(rate);
+    }
+
+    private Rate createRate(String currencyCode) {
+        LOGGER.info("creating rate {}", currencyCode);
         Currency currency = Currency.getInstance(currencyCode);
-        return new Rate(currencyCode, currency.getSymbol(), currency.getDisplayName(), new BigDecimal(fxRate));
+        Rate rate = new Rate(currencyCode, currency.getSymbol(), currency.getDisplayName());
+        Rate instance = INSTANCES.putIfAbsent(currencyCode, rate);
+        return instance != null ? instance : rate;
     }
 
 }
