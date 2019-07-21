@@ -26,8 +26,11 @@ public class RateScheduler {
     }
 
     public void startScheduling() {
+        LOGGER.info("starting rate scheduler (should only happen once, on application start-up)");
+
         // rates should be populated as soon application starts up (only once), and then subsequently according to delay
         if (rates.empty()) {
+            LOGGER.info("rates data source empty");
             rateGetter.getRates(rates);
             rates.putRate("EUR", "1"); // add base rate EUR to rates
         }

@@ -1,14 +1,15 @@
 package service;
 
 import data.Rates;
-import model.ConverterResponse;
-import model.Rate;
+import domain.CurrencyPair;
+import domain.Rate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.math.BigDecimal;
 import java.math.MathContext;
 import java.math.RoundingMode;
+import java.util.Optional;
 
 public class Converter {
 
@@ -20,17 +21,29 @@ public class Converter {
         this.rates = rates;
     }
 
-    public ConverterResponse convert(String sourceCurrCode, String targetCurrCode, BigDecimal amount) {
+    public CurrencyPair convert(String sourceCurrCode, String targetCurrCode, BigDecimal amount) {
         Rate eur2Source = rates.getCurrency(sourceCurrCode);
         Rate eur2Target = rates.getCurrency(targetCurrCode);
 
-        BigDecimal converted = convert(rates.getRate(eur2Source), rates.getRate(eur2Target), amount);
+        LOGGER.debug("source: {}, target: {}", eur2Source, eur2Target);
 
-        String source2TargetFxRate = String.format("1 %s = %.6f %s",
-                sourceCurrCode, converted.divide(amount, MC), targetCurrCode);
+        Optional<BigDecimal> sourceRate = rates.getRate(eur2Source);
+        Optional<BigDecimal> targetRate = rates.getRate(eur2Target);
 
-        return new ConverterResponse(sourceCurrCode, targetCurrCode, amount, converted, source2TargetFxRate,
-                eur2Source.getDisplayName(), eur2Target.getDisplayName());
+        LOGGER.debug("source fx rate {}:{}, target fx rate {}:{}", sourceCurrCode, sourceRate.orElse(null),
+                targetCurrCode, targetRate.orElse(null));
+
+        CurrencyPair currencyPair;
+        if (sourceRate.isEmpty() || targetRate.isEmpty()) {
+            currencyPair = new CurrencyPair(sourceCurrCode, targetCurrCode, eur2Source.getDisplayName(), eur2Target.getDisplayName(),
+                    amount, null, rates.getLastUpdated(), null);
+        } else {
+            BigDecimal converted = convert(sourceRate.get(), targetRate.get(), amount);
+            currencyPair = new CurrencyPair(sourceCurrCode, targetCurrCode, eur2Source.getDisplayName(), eur2Target.getDisplayName(),
+                    amount, converted, rates.getLastUpdated(), converted.divide(amount, MC));
+        }
+
+        return currencyPair;
     }
 
     private BigDecimal convert(BigDecimal sourceRate, BigDecimal targetRate, BigDecimal amount) {

@@ -1,6 +1,6 @@
 package data;
 
-import model.Rate;
+import domain.Rate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
@@ -18,6 +18,7 @@ import java.time.LocalDate;
 import java.util.Currency;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
@@ -78,16 +79,26 @@ public class Rates {
         return createRate(currencyCode);
     }
 
-    public BigDecimal getRate(Rate rate) {
-        return rates.get(rate);
+    public Optional<BigDecimal> getRate(Rate rate) {
+        return Optional.ofNullable(rates.get(rate));
     }
 
     private Rate createRate(String currencyCode) {
-        LOGGER.info("creating rate {}", currencyCode);
-        Currency currency = Currency.getInstance(currencyCode);
-        Rate rate = new Rate(currencyCode, currency.getSymbol(), currency.getDisplayName());
-        Rate instance = INSTANCES.putIfAbsent(currencyCode, rate);
-        return instance != null ? instance : rate;
+        LOGGER.debug("creating rate {}", currencyCode);
+
+        Rate r;
+        try {
+            Currency currency = Currency.getInstance(currencyCode);
+            Rate rate = new Rate(currencyCode, currency.getSymbol(), currency.getDisplayName());
+            Rate instance = INSTANCES.putIfAbsent(currencyCode, rate);
+            r = instance != null ? instance : rate;
+        } catch (IllegalArgumentException e) {
+            String invalidCurrCode = "invalid currency code: " + currencyCode;
+            LOGGER.error(invalidCurrCode, e);
+            r = new Rate(invalidCurrCode, invalidCurrCode, invalidCurrCode);
+        }
+
+        return r;
     }
 
 }
