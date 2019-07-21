@@ -22,6 +22,8 @@ public class Runner {
         System.out.println(converter.convert("GBP", "USD", BigDecimal.TEN));
         System.out.println(converter.convert("GBP", "GBP", BigDecimal.TEN));
         System.out.println(converter.convert("EUR", "GBP", BigDecimal.TEN));
+        System.out.println(converter.convert("hjk", "GBP", BigDecimal.TEN));
+        System.out.println(converter.convert("USD", "JPY", BigDecimal.ZERO));
 
     }
 
