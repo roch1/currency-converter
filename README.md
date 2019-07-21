@@ -5,5 +5,7 @@ A service for converting currencies using the foreign exchange reference rates p
 ~~+ `ScheduledTask` for updating FX rates~~
 + Testing concurrent access to rates data
 + `React TypeScript` frontend
-+ `Spring Boot` microservice
+
+~~+ `Spring Boot` microservice~~
+
 + `Docker`, `AWS` and `Terraform`
