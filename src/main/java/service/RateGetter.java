@@ -3,7 +3,14 @@ package service;
 import data.Rates;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.NodeList;
+import org.xml.sax.SAXException;
 
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -26,16 +33,16 @@ public class RateGetter {
 
     public void getRates(Rates rates) {
         try {
-            final URL dailyRatesUrl = new URL(DAILY_RATES_URL);
+            URL dailyRatesUrl = new URL(DAILY_RATES_URL);
             LocalDate fileDate = lastUpdated(dailyRatesUrl);
             if (published(fileDate, rates.getLastUpdated())) {
                 File ratesFile = createDirs();
                 refresh(ratesFile, dailyRatesUrl);
-                rates.parse(ratesFile);
+                parse(ratesFile, rates);
                 rates.setLastUpdated(fileDate);
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            LOGGER.error("error creating URL from String", e);
         }
     }
 
@@ -52,7 +59,7 @@ public class RateGetter {
                 }
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            LOGGER.error("error with opening URL stream or reading line", e);
         }
         return updatedDate;
     }
@@ -73,9 +80,37 @@ public class RateGetter {
             bytesTransferred = fos.getChannel().transferFrom(rbc, 0, Long.MAX_VALUE);
             LOGGER.info("new rates file downloaded");
         } catch (IOException e) {
-            e.printStackTrace();
+            LOGGER.error("error with channels or streams", e);
         }
         return bytesTransferred;
+    }
+
+    private void parse(File ratesFile, Rates rates) {
+        DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+        try {
+            dbf.setFeature("http://apache.org/xml/features/nonvalidating/load-dtd-grammar", false);
+            dbf.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false);
+
+            DocumentBuilder docbuilder = dbf.newDocumentBuilder();
+            Document doc = docbuilder.parse(ratesFile);
+            doc.getDocumentElement().normalize();
+
+            LOGGER.debug("parsing rates file");
+
+            NodeList nodeList = doc.getElementsByTagName("Cube");
+            for (int i = 0; i < nodeList.getLength(); i++) {
+                Element e = (Element) nodeList.item(i);
+                if (e.hasAttribute("currency")) {
+                    String currencyCode = e.getAttribute("currency");
+                    String fxRate = e.getAttribute("rate");
+                    rates.putRate(currencyCode, fxRate);
+                }
+            }
+
+            LOGGER.debug("rates file parsing completed");
+        } catch (ParserConfigurationException | IOException | SAXException e) {
+            LOGGER.error("error setting feature or parsing rates file", e);
+        }
     }
 
     private File createDirs() {
