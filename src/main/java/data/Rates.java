@@ -20,13 +20,12 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
 
 public class Rates {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(Rates.class);
     private static final int INITIAL_CAPACITY = 32;
-    private static final ConcurrentMap<String, Rate> INSTANCES = new ConcurrentHashMap<>(INITIAL_CAPACITY);
+    private static final Map<String, Rate> INSTANCES = new ConcurrentHashMap<>(INITIAL_CAPACITY);
     private final Map<Rate, BigDecimal> rates = new HashMap<>(INITIAL_CAPACITY);
     private LocalDate lastUpdated = LocalDate.now().minusDays(4);
 
@@ -70,6 +69,10 @@ public class Rates {
         rates.put(getCurrency(currencyCode), new BigDecimal(fxRate));
     }
 
+    public Optional<BigDecimal> getFxRate(Rate currency) {
+        return Optional.ofNullable(rates.get(currency));
+    }
+
     public Rate getCurrency(String currencyCode) {
         Rate instance = INSTANCES.get(currencyCode);
         if (instance != null) {
@@ -77,10 +80,6 @@ public class Rates {
         }
 
         return createRate(currencyCode);
-    }
-
-    public Optional<BigDecimal> getRate(Rate rate) {
-        return Optional.ofNullable(rates.get(rate));
     }
 
     private Rate createRate(String currencyCode) {
