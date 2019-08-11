@@ -3,16 +3,7 @@ package data;
 import domain.Rate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.NodeList;
-import org.xml.sax.SAXException;
 
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-import java.io.File;
-import java.io.IOException;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.Currency;
@@ -28,30 +19,6 @@ public class Rates {
     private static final Map<String, Rate> INSTANCES = new ConcurrentHashMap<>(INITIAL_CAPACITY);
     private final Map<Rate, BigDecimal> rates = new HashMap<>(INITIAL_CAPACITY);
     private LocalDate lastUpdated = LocalDate.now().minusDays(4);
-
-    public void parse(File ratesFile) {
-        DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
-        try {
-            dbf.setFeature("http://apache.org/xml/features/nonvalidating/load-dtd-grammar", false);
-            dbf.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false);
-
-            DocumentBuilder docbuilder = dbf.newDocumentBuilder();
-            Document doc = docbuilder.parse(ratesFile);
-            doc.getDocumentElement().normalize();
-
-            NodeList nodeList = doc.getElementsByTagName("Cube");
-            for (int i = 0; i < nodeList.getLength(); i++) {
-                Element e = (Element) nodeList.item(i);
-                if (e.hasAttribute("currency")) {
-                    String currencyCode = e.getAttribute("currency");
-                    String fxRate = e.getAttribute("rate");
-                    putRate(currencyCode, fxRate);
-                }
-            }
-        } catch (ParserConfigurationException | IOException | SAXException e) {
-            e.printStackTrace();
-        }
-    }
 
     public LocalDate getLastUpdated() {
         return lastUpdated;
