@@ -14,11 +14,10 @@ public final class CurrencyPair {
     private final BigDecimal sourceAmount;
     private final BigDecimal convertedAmount;
     private final LocalDate lastUpdated;
-    private final BigDecimal oneSourceToTargetRate;
     private final String message;
 
     public CurrencyPair(String sourceCurrCode, String targetCurrCode, String sourceDisplayName, String targetDisplayName,
-                        BigDecimal sourceAmount, BigDecimal convertedAmount, LocalDate lastUpdated, BigDecimal oneSourceToTargetRate) {
+                        BigDecimal sourceAmount, BigDecimal convertedAmount, LocalDate lastUpdated, String message) {
         this.sourceCurrCode = sourceCurrCode;
         this.targetCurrCode = targetCurrCode;
         this.sourceDisplayName = sourceDisplayName;
@@ -26,15 +25,12 @@ public final class CurrencyPair {
         this.sourceAmount = sourceAmount;
         this.convertedAmount = convertedAmount;
         this.lastUpdated = lastUpdated;
-        this.oneSourceToTargetRate = oneSourceToTargetRate;
-        this.message = currencyPairMessage();
+        this.message = message;
     }
 
-    private String currencyPairMessage() {
-        if (oneSourceToTargetRate == null) {
-            return "One or more exchange rates are not available, cannot complete currency conversion request";
-        }
-        return String.format("1 %s = %.6f %s", sourceCurrCode, oneSourceToTargetRate, targetCurrCode);
+    public CurrencyPair(String sourceCurrCode, String targetCurrCode, BigDecimal sourceAmount, String message) {
+        this(sourceCurrCode, targetCurrCode, null, null, sourceAmount,
+                null, null, message);
     }
 
     public String getSourceCurrCode() {
@@ -54,11 +50,11 @@ public final class CurrencyPair {
     }
 
     public BigDecimal getSourceAmount() {
-        return sourceAmount;
+        return new BigDecimal(sourceAmount.toString());
     }
 
     public BigDecimal getConvertedAmount() {
-        return convertedAmount;
+        return new BigDecimal(convertedAmount.toString());
     }
 
     public LocalDate getLastUpdated() {
@@ -67,20 +63,6 @@ public final class CurrencyPair {
 
     public String getMessage() {
         return message;
-    }
-
-    @Override
-    public String toString() {
-        return "CurrencyPair{" +
-                "sourceCurrCode='" + sourceCurrCode + '\'' +
-                ", targetCurrCode='" + targetCurrCode + '\'' +
-                ", sourceDisplayName='" + sourceDisplayName + '\'' +
-                ", targetDisplayName='" + targetDisplayName + '\'' +
-                ", sourceAmount=" + sourceAmount +
-                ", convertedAmount=" + convertedAmount +
-                ", lastUpdated=" + lastUpdated +
-                ", message='" + message + '\'' +
-                '}';
     }
 
     @Override
@@ -95,14 +77,27 @@ public final class CurrencyPair {
                 Objects.equals(sourceAmount, that.sourceAmount) &&
                 Objects.equals(convertedAmount, that.convertedAmount) &&
                 Objects.equals(lastUpdated, that.lastUpdated) &&
-                Objects.equals(oneSourceToTargetRate, that.oneSourceToTargetRate) &&
                 Objects.equals(message, that.message);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(sourceCurrCode, targetCurrCode, sourceDisplayName, targetDisplayName, sourceAmount, convertedAmount,
-                lastUpdated, oneSourceToTargetRate, message);
+        return Objects.hash(sourceCurrCode, targetCurrCode, sourceDisplayName, targetDisplayName, sourceAmount,
+                convertedAmount, lastUpdated, message);
+    }
+
+    @Override
+    public String toString() {
+        return "CurrencyPair{" +
+                "sourceCurrCode='" + sourceCurrCode + '\'' +
+                ", targetCurrCode='" + targetCurrCode + '\'' +
+                ", sourceDisplayName='" + sourceDisplayName + '\'' +
+                ", targetDisplayName='" + targetDisplayName + '\'' +
+                ", sourceAmount=" + sourceAmount +
+                ", convertedAmount=" + convertedAmount +
+                ", lastUpdated=" + lastUpdated +
+                ", message='" + message + '\'' +
+                '}';
     }
 
 }

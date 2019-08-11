@@ -17,7 +17,7 @@
         <maven.compiler.version>3.8.1</maven.compiler.version>
         <maven.shade.version>3.2.1</maven.shade.version>
         <spring-boot.version>2.1.6.RELEASE</spring-boot.version>
-        <java.version>12</java.version>
+        <java.version>11</java.version>
     </properties>
 
     <dependencyManagement>

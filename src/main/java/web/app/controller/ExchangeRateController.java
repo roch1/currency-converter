@@ -25,6 +25,8 @@ public class ExchangeRateController {
         this.currencyConverter = currencyConverter;
     }
 
+    // @GetMapping for base path /rates
+
     @GetMapping("/{currencyCode}")
     public Rate rateByCode(@PathVariable("currencyCode") String currencyCode) {
         return rates.getCurrency(currencyCode);

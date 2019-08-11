@@ -2,6 +2,7 @@ package service;
 
 import data.Rates;
 import domain.CurrencyPair;
+import domain.CurrencySingle;
 import domain.Rate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,25 +23,20 @@ public class Converter {
     }
 
     public CurrencyPair convert(String sourceCurrCode, String targetCurrCode, BigDecimal amount) {
-        Rate eur2Source = rates.getCurrency(sourceCurrCode);
-        Rate eur2Target = rates.getCurrency(targetCurrCode);
+        LOGGER.debug("convert request: {} {} to {}", amount, sourceCurrCode, targetCurrCode);
+        if (amount.compareTo(BigDecimal.ONE) < 0 ) {
+            return zero(sourceCurrCode, targetCurrCode, amount);
+        }
 
-        LOGGER.debug("source: {}, target: {}", eur2Source, eur2Target);
-
-        Optional<BigDecimal> sourceRate = rates.getRate(eur2Source);
-        Optional<BigDecimal> targetRate = rates.getRate(eur2Target);
-
-        LOGGER.debug("source fx rate {}:{}, target fx rate {}:{}", sourceCurrCode, sourceRate.orElse(null),
-                targetCurrCode, targetRate.orElse(null));
+        CurrencySingle source = getCurrency(sourceCurrCode);
+        CurrencySingle target = getCurrency(targetCurrCode);
 
         CurrencyPair currencyPair;
-        if (sourceRate.isEmpty() || targetRate.isEmpty()) {
-            currencyPair = new CurrencyPair(sourceCurrCode, targetCurrCode, eur2Source.getDisplayName(), eur2Target.getDisplayName(),
-                    amount, null, rates.getLastUpdated(), null);
+        if (source.getRate() == null || target.getRate() == null) {
+            currencyPair = invalid(source, target, amount);
         } else {
-            BigDecimal converted = convert(sourceRate.get(), targetRate.get(), amount);
-            currencyPair = new CurrencyPair(sourceCurrCode, targetCurrCode, eur2Source.getDisplayName(), eur2Target.getDisplayName(),
-                    amount, converted, rates.getLastUpdated(), converted.divide(amount, MC));
+            BigDecimal converted = convert(source.getRate(), target.getRate(), amount);
+            currencyPair = valid(source, target, amount, converted);
         }
 
         return currencyPair;
@@ -50,6 +46,36 @@ public class Converter {
         BigDecimal sourceEurRate = BigDecimal.ONE.divide(sourceRate, MC);
         BigDecimal sourceToEur = amount.multiply(sourceEurRate, MC);
         return sourceToEur.multiply(targetRate, MC);
+    }
+
+    private CurrencyPair valid(CurrencySingle source, CurrencySingle target, BigDecimal amount, BigDecimal converted) {
+        String srcCurrCode = source.getCurrency().getCurrencyCode();
+        String trgtCurrCode = target.getCurrency().getCurrencyCode();
+        String message = String.format("1 %s = %.6f %s", srcCurrCode, converted.divide(amount, MC), trgtCurrCode);
+        return new CurrencyPair(srcCurrCode, trgtCurrCode, source.getCurrency().getDisplayName(), target.getCurrency().getDisplayName(),
+                amount, converted, rates.getLastUpdated(), message);
+    }
+
+    private CurrencyPair invalid(CurrencySingle source, CurrencySingle target, BigDecimal amount) {
+        String message = "One or more exchange rates are not available, cannot complete currency conversion request";
+        return new CurrencyPair(source.getCurrency().getCurrencyCode(), target.getCurrency().getCurrencyCode(), amount, message);
+    }
+
+    private CurrencyPair zero(String sourceCurrCode, String targetCurrCode, BigDecimal amount) {
+        String message = String.format("0 %s = 0 %s", sourceCurrCode, targetCurrCode);
+        return new CurrencyPair(sourceCurrCode, targetCurrCode, getDisplayName(sourceCurrCode), getDisplayName(targetCurrCode),
+                amount, BigDecimal.ZERO, rates.getLastUpdated(), message);
+    }
+
+    private CurrencySingle getCurrency(String currencyCode) {
+        Rate currency = rates.getCurrency(currencyCode);
+        Optional<BigDecimal> rate = rates.getFxRate(currency);
+        return rate.map(r -> new CurrencySingle(currency, r))
+                .orElseGet(() -> new CurrencySingle(currency, null));
+    }
+
+    private String getDisplayName(String currencyCode) {
+        return rates.getCurrency(currencyCode).getDisplayName();
     }
 
 }
