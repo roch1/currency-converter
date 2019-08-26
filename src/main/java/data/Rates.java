@@ -12,32 +12,34 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 
+// Rates could be a singleton? - consider any impact to testing
+
 public class Rates {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(Rates.class);
     private static final int INITIAL_CAPACITY = 32;
     private static final Map<String, Rate> INSTANCES = new ConcurrentHashMap<>(INITIAL_CAPACITY);
-    private final Map<Rate, BigDecimal> rates = new HashMap<>(INITIAL_CAPACITY);
-    private LocalDate lastUpdated = LocalDate.now().minusDays(4);
+    private static final Map<Rate, BigDecimal> RATES = new HashMap<>(INITIAL_CAPACITY);
+    private static LocalDate LAST_UPDATED = LocalDate.now().minusDays(4);
 
     public LocalDate getLastUpdated() {
-        return lastUpdated;
+        return LAST_UPDATED;
     }
 
     public void setLastUpdated(LocalDate lastUpdated) {
-        this.lastUpdated = lastUpdated;
+        LAST_UPDATED = lastUpdated;
     }
 
     public boolean empty() {
-        return rates.isEmpty();
+        return RATES.isEmpty();
     }
 
     public void putRate(String currencyCode, String fxRate) {
-        rates.put(getCurrency(currencyCode), new BigDecimal(fxRate));
+        RATES.put(getCurrency(currencyCode), new BigDecimal(fxRate));
     }
 
     public Optional<BigDecimal> getFxRate(Rate currency) {
-        return Optional.ofNullable(rates.get(currency));
+        return Optional.ofNullable(RATES.get(currency));
     }
 
     public Rate getCurrency(String currencyCode) {

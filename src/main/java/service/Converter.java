@@ -23,48 +23,36 @@ public class Converter {
     }
 
     public CurrencyPair convert(String sourceCurrCode, String targetCurrCode, BigDecimal amount) {
-        LOGGER.debug("convert request: {} {} to {}", amount, sourceCurrCode, targetCurrCode);
-        if (amount.compareTo(BigDecimal.ONE) < 0 ) {
-            return zero(sourceCurrCode, targetCurrCode, amount);
-        }
-
+        LOGGER.debug("request: convert {} {} to {}", amount, sourceCurrCode, targetCurrCode);
         CurrencySingle source = getCurrency(sourceCurrCode);
         CurrencySingle target = getCurrency(targetCurrCode);
 
-        CurrencyPair currencyPair;
-        if (source.getRate() == null || target.getRate() == null) {
-            currencyPair = invalid(source, target, amount);
-        } else {
-            BigDecimal converted = convert(source.getRate(), target.getRate(), amount);
-            currencyPair = valid(source, target, amount, converted);
+        if (amount.compareTo(BigDecimal.ONE) < 0) {
+            return valid(source, target, amount, BigDecimal.ZERO, ConverterMessage.ZERO, BigDecimal.ZERO);
+        } else if (source.getRate() == null || target.getRate() == null) {
+            return invalid(source, target, amount);
         }
 
-        return currencyPair;
+        BigDecimal converted = convert(source.getRate(), target.getRate(), amount);
+        return valid(source, target, amount, converted, ConverterMessage.VALID, converted.divide(amount, MC));
     }
 
     private BigDecimal convert(BigDecimal sourceRate, BigDecimal targetRate, BigDecimal amount) {
         BigDecimal sourceEurRate = BigDecimal.ONE.divide(sourceRate, MC);
-        BigDecimal sourceToEur = amount.multiply(sourceEurRate, MC);
-        return sourceToEur.multiply(targetRate, MC);
+        BigDecimal sourceEurAmount = amount.multiply(sourceEurRate, MC);
+        return sourceEurAmount.multiply(targetRate, MC);
     }
 
-    private CurrencyPair valid(CurrencySingle source, CurrencySingle target, BigDecimal amount, BigDecimal converted) {
+    private CurrencyPair valid(CurrencySingle source, CurrencySingle target, BigDecimal requestAmount,
+                                     BigDecimal convertedAmount, ConverterMessage message, BigDecimal quotation) {
         String srcCurrCode = source.getCurrency().getCurrencyCode();
-        String trgtCurrCode = target.getCurrency().getCurrencyCode();
-        String message = String.format("1 %s = %.6f %s", srcCurrCode, converted.divide(amount, MC), trgtCurrCode);
-        return new CurrencyPair(srcCurrCode, trgtCurrCode, source.getCurrency().getDisplayName(), target.getCurrency().getDisplayName(),
-                amount, converted, rates.getLastUpdated(), message);
+        String targetCurrCode = target.getCurrency().getCurrencyCode();
+        String m = message.formatMessage(srcCurrCode, quotation, targetCurrCode);
+        return new CurrencyPair(source, target, requestAmount, convertedAmount, rates.getLastUpdated(), m);
     }
 
-    private CurrencyPair invalid(CurrencySingle source, CurrencySingle target, BigDecimal amount) {
-        String message = "One or more exchange rates are not available, cannot complete currency conversion request";
-        return new CurrencyPair(source.getCurrency().getCurrencyCode(), target.getCurrency().getCurrencyCode(), amount, message);
-    }
-
-    private CurrencyPair zero(String sourceCurrCode, String targetCurrCode, BigDecimal amount) {
-        String message = String.format("0 %s = 0 %s", sourceCurrCode, targetCurrCode);
-        return new CurrencyPair(sourceCurrCode, targetCurrCode, getDisplayName(sourceCurrCode), getDisplayName(targetCurrCode),
-                amount, BigDecimal.ZERO, rates.getLastUpdated(), message);
+    private CurrencyPair invalid(CurrencySingle source, CurrencySingle target, BigDecimal requestAmount) {
+        return new CurrencyPair(source, target, requestAmount, ConverterMessage.INVALID.getMessage());
     }
 
     private CurrencySingle getCurrency(String currencyCode) {
@@ -74,8 +62,25 @@ public class Converter {
                 .orElseGet(() -> new CurrencySingle(currency, null));
     }
 
-    private String getDisplayName(String currencyCode) {
-        return rates.getCurrency(currencyCode).getDisplayName();
+    private enum ConverterMessage {
+        VALID("1 %s = %.6f %s"),
+        INVALID("One or more exchange rates are not available, cannot complete currency conversion request"),
+        ZERO("0 %s = %.6f %s")
+        ;
+
+        private String message;
+
+        ConverterMessage(String message) {
+            this.message = message;
+        }
+
+        String getMessage() {
+            return message;
+        }
+
+        String formatMessage(String sourceCurrCode, BigDecimal convertedAmount, String targetCurrCode) {
+            return String.format(message, sourceCurrCode, convertedAmount, targetCurrCode);
+        }
     }
 
 }
