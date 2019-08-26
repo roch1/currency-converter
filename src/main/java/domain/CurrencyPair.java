@@ -7,62 +7,24 @@ import java.util.Objects;
 // value type
 public final class CurrencyPair {
 
-    private final String sourceCurrCode;
-    private final String targetCurrCode;
-    private final String sourceDisplayName;
-    private final String targetDisplayName;
-    private final BigDecimal sourceAmount;
+    private final CurrencySingle source;
+    private final CurrencySingle target;
+    private final BigDecimal requestAmount;
     private final BigDecimal convertedAmount;
     private final LocalDate lastUpdated;
     private final String message;
 
-    public CurrencyPair(String sourceCurrCode, String targetCurrCode, String sourceDisplayName, String targetDisplayName,
-                        BigDecimal sourceAmount, BigDecimal convertedAmount, LocalDate lastUpdated, String message) {
-        this.sourceCurrCode = sourceCurrCode;
-        this.targetCurrCode = targetCurrCode;
-        this.sourceDisplayName = sourceDisplayName;
-        this.targetDisplayName = targetDisplayName;
-        this.sourceAmount = sourceAmount;
+    public CurrencyPair(CurrencySingle source, CurrencySingle target, BigDecimal requestAmount, BigDecimal convertedAmount, LocalDate lastUpdated, String message) {
+        this.source = source;
+        this.target = target;
+        this.requestAmount = requestAmount;
         this.convertedAmount = convertedAmount;
         this.lastUpdated = lastUpdated;
         this.message = message;
     }
 
-    public CurrencyPair(String sourceCurrCode, String targetCurrCode, BigDecimal sourceAmount, String message) {
-        this(sourceCurrCode, targetCurrCode, null, null, sourceAmount,
-                null, null, message);
-    }
-
-    public String getSourceCurrCode() {
-        return sourceCurrCode;
-    }
-
-    public String getTargetCurrCode() {
-        return targetCurrCode;
-    }
-
-    public String getSourceDisplayName() {
-        return sourceDisplayName;
-    }
-
-    public String getTargetDisplayName() {
-        return targetDisplayName;
-    }
-
-    public BigDecimal getSourceAmount() {
-        return new BigDecimal(sourceAmount.toString());
-    }
-
-    public BigDecimal getConvertedAmount() {
-        return new BigDecimal(convertedAmount.toString());
-    }
-
-    public LocalDate getLastUpdated() {
-        return lastUpdated;
-    }
-
-    public String getMessage() {
-        return message;
+    public CurrencyPair(CurrencySingle source, CurrencySingle target, BigDecimal requestAmount, String message) {
+        this(source, target, requestAmount, null, null, message);
     }
 
     @Override
@@ -70,11 +32,9 @@ public final class CurrencyPair {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         CurrencyPair that = (CurrencyPair) o;
-        return Objects.equals(sourceCurrCode, that.sourceCurrCode) &&
-                Objects.equals(targetCurrCode, that.targetCurrCode) &&
-                Objects.equals(sourceDisplayName, that.sourceDisplayName) &&
-                Objects.equals(targetDisplayName, that.targetDisplayName) &&
-                Objects.equals(sourceAmount, that.sourceAmount) &&
+        return Objects.equals(source, that.source) &&
+                Objects.equals(target, that.target) &&
+                Objects.equals(requestAmount, that.requestAmount) &&
                 Objects.equals(convertedAmount, that.convertedAmount) &&
                 Objects.equals(lastUpdated, that.lastUpdated) &&
                 Objects.equals(message, that.message);
@@ -82,18 +42,15 @@ public final class CurrencyPair {
 
     @Override
     public int hashCode() {
-        return Objects.hash(sourceCurrCode, targetCurrCode, sourceDisplayName, targetDisplayName, sourceAmount,
-                convertedAmount, lastUpdated, message);
+        return Objects.hash(source, target, requestAmount, convertedAmount, lastUpdated, message);
     }
 
     @Override
     public String toString() {
         return "CurrencyPair{" +
-                "sourceCurrCode='" + sourceCurrCode + '\'' +
-                ", targetCurrCode='" + targetCurrCode + '\'' +
-                ", sourceDisplayName='" + sourceDisplayName + '\'' +
-                ", targetDisplayName='" + targetDisplayName + '\'' +
-                ", sourceAmount=" + sourceAmount +
+                "source=" + source +
+                ", target=" + target +
+                ", requestAmount=" + requestAmount +
                 ", convertedAmount=" + convertedAmount +
                 ", lastUpdated=" + lastUpdated +
                 ", message='" + message + '\'' +
