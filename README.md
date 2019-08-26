@@ -9,3 +9,4 @@ A service for converting currencies using the foreign exchange reference rates p
 ~~+ `Spring Boot` microservice~~
 
 + `Docker`, `AWS` and `Terraform`
++ Set up Continuous Integration build
