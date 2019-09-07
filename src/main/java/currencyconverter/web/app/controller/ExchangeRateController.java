@@ -1,15 +1,15 @@
-package web.app.controller;
+package currencyconverter.web.app.controller;
 
-import data.Rates;
-import domain.CurrencyPair;
-import domain.Rate;
+import currencyconverter.data.Rates;
+import currencyconverter.domain.CurrencyPair;
+import currencyconverter.domain.Rate;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import service.Converter;
+import currencyconverter.service.Converter;
 
 import java.math.BigDecimal;
 

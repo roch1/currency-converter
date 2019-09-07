@@ -1,13 +1,13 @@
-package web.app.configuration;
+package currencyconverter.web.app.configuration;
 
-import data.Rates;
+import currencyconverter.data.Rates;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import service.Converter;
-import service.RateGetter;
-import service.RateScheduler;
+import currencyconverter.service.Converter;
+import currencyconverter.service.RateGetter;
+import currencyconverter.service.RateScheduler;
 
 @Configuration
 public class CurrencyConverterConfiguration {

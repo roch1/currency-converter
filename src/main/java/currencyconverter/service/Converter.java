@@ -1,9 +1,9 @@
-package service;
+package currencyconverter.service;
 
-import data.Rates;
-import domain.CurrencyPair;
-import domain.CurrencySingle;
-import domain.Rate;
+import currencyconverter.data.Rates;
+import currencyconverter.domain.CurrencyPair;
+import currencyconverter.domain.CurrencySingle;
+import currencyconverter.domain.Rate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -56,6 +56,7 @@ public class Converter {
     }
 
     private CurrencySingle getCurrency(String currencyCode) {
+        // the same CurrencySingle object gets created multiple times a day
         Rate currency = rates.getCurrency(currencyCode);
         Optional<BigDecimal> rate = rates.getFxRate(currency);
         return rate.map(r -> new CurrencySingle(currency, r))
