@@ -1,4 +1,4 @@
-package domain;
+package currencyconverter.domain;
 
 import java.util.Objects;
 

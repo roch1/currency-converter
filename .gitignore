@@ -1,6 +1,9 @@
 /target/
 rates/
 
+### maven ###
+/dependency-reduced-pom.xml
+
 ### IntelliJ IDEA ###
 .idea
 *.iws

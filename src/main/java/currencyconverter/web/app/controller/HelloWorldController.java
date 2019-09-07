@@ -1,4 +1,4 @@
-package web.app.controller;
+package currencyconverter.web.app.controller;
 
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;

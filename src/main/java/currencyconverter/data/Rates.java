@@ -1,6 +1,6 @@
-package data;
+package currencyconverter.data;
 
-import domain.Rate;
+import currencyconverter.domain.Rate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

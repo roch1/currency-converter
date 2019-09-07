@@ -1,4 +1,4 @@
-package domain;
+package currencyconverter.domain;
 
 import java.math.BigDecimal;
 import java.util.Objects;

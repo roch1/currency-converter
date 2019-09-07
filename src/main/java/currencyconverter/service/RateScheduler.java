@@ -1,6 +1,6 @@
-package service;
+package currencyconverter.service;
 
-import data.Rates;
+import currencyconverter.data.Rates;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -30,7 +30,7 @@ public class RateScheduler {
 
         // rates should be populated as soon application starts up (only once), and then subsequently according to delay
         if (rates.empty()) {
-            LOGGER.info("rates data source empty");
+            LOGGER.info("rates currencyconverter.data source empty");
             rateGetter.getRates(rates);
             rates.putRate("EUR", "1"); // add base rate EUR to rates
         }
