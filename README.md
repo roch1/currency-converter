@@ -1,4 +1,4 @@
-[![CircleCI](https://circleci.com/gh/roch1/currency-converter.svg?style=sheild)](https://circleci.com/gh/roch1/currency-converter)
+![CircleCI](https://img.shields.io/circleci/build/gh/roch1/currency-converter)
 
 # Currency Converter
 A service for converting currencies using the foreign exchange reference rates published by the ECB.
