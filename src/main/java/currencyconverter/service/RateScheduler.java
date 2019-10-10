@@ -5,6 +5,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.time.Duration;
+import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
@@ -30,7 +31,7 @@ public class RateScheduler {
 
         // rates should be populated as soon application starts up (only once), and then subsequently according to delay
         if (rates.empty()) {
-            LOGGER.info("rates currencyconverter.data source empty");
+            LOGGER.info("rates data source empty");
             rateGetter.getRates(rates);
             rates.putRate("EUR", "1"); // add base rate EUR to rates
         }
@@ -53,16 +54,20 @@ public class RateScheduler {
     private long getInterval() {
         ZonedDateTime timeNow = ZonedDateTime.now(ZoneId.systemDefault());
         ZonedDateTime targetTime = getUpdateTime();
+        LOGGER.debug("time now: {}, target time: {}", timeNow, targetTime);
         if (timeNow.isAfter(targetTime)) {
-            targetTime.plusDays(1);
+            targetTime = targetTime.plusDays(1); // ZonedDateTime is immutable, copy of object is returned, therefore needs to be assigned to original variable
         }
+        LOGGER.debug("time now: {}, target time: {}", timeNow, targetTime);
         Duration duration = Duration.between(timeNow, targetTime);
         return duration.getSeconds();
     }
 
     private ZonedDateTime getUpdateTime() {
         LocalTime updateTime = LocalTime.of(16, 1);
-        ZonedDateTime cet = ZonedDateTime.now(ZoneId.of("Europe/Paris")).with(updateTime);
+        LOGGER.debug("update time {}", updateTime);
+        ZonedDateTime cet = ZonedDateTime.of(LocalDate.now(), updateTime, ZoneId.of("Europe/Paris"));
+        LOGGER.debug("update time in CET {}", cet);
         return cet.withZoneSameInstant(ZoneId.systemDefault()); // convert CET update time to local system time
     }
 
