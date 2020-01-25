@@ -27,7 +27,7 @@ public class RateScheduler {
     }
 
     public void startScheduling() {
-        LOGGER.info("starting rate scheduler (should only happen once, on application start-up)");
+        LOGGER.info("starting rate scheduler (should happen on application start-up only)");
 
         // rates should be populated as soon application starts up (only once), and then subsequently according to delay
         if (rates.empty()) {
@@ -54,11 +54,11 @@ public class RateScheduler {
     private long getInterval() {
         ZonedDateTime timeNow = ZonedDateTime.now(ZoneId.systemDefault());
         ZonedDateTime targetTime = getUpdateTime();
-        LOGGER.debug("time now: {}, target time: {}", timeNow, targetTime);
+        LOGGER.debug("time now: {}, target time in local system time zone: {}", timeNow, targetTime);
         if (timeNow.isAfter(targetTime)) {
             targetTime = targetTime.plusDays(1); // ZonedDateTime is immutable, copy of object is returned, therefore needs to be assigned to original variable
         }
-        LOGGER.debug("time now: {}, target time: {}", timeNow, targetTime);
+        LOGGER.debug("time now: {}, target time in local system time zone: {}", timeNow, targetTime);
         Duration duration = Duration.between(timeNow, targetTime);
         return duration.getSeconds();
     }
@@ -66,9 +66,9 @@ public class RateScheduler {
     private ZonedDateTime getUpdateTime() {
         LocalTime updateTime = LocalTime.of(16, 1);
         LOGGER.debug("update time {}", updateTime);
-        ZonedDateTime cet = ZonedDateTime.of(LocalDate.now(), updateTime, ZoneId.of("Europe/Paris"));
-        LOGGER.debug("update time in CET {}", cet);
-        return cet.withZoneSameInstant(ZoneId.systemDefault()); // convert CET update time to local system time
+        ZonedDateTime centralEuropeanTimeZone = ZonedDateTime.of(LocalDate.now(), updateTime, ZoneId.of("Europe/Paris"));
+        LOGGER.debug("update time in CET {}", centralEuropeanTimeZone);
+        return centralEuropeanTimeZone.withZoneSameInstant(ZoneId.systemDefault()); // convert CET update time to local system time
     }
 
 }

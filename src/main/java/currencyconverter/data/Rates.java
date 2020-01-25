@@ -61,7 +61,7 @@ public class Rates {
             Rate instance = INSTANCES.putIfAbsent(currencyCode, rate);
             r = instance != null ? instance : rate;
         } catch (IllegalArgumentException e) {
-            String invalidCurrCode = "invalid currency code: " + currencyCode;
+            String invalidCurrCode = "invalid currency code [" + currencyCode + "]";
             LOGGER.error(invalidCurrCode, e);
             r = new Rate(invalidCurrCode, invalidCurrCode, invalidCurrCode);
         }
