@@ -10,7 +10,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.Month;
 import java.util.Optional;
 
@@ -41,7 +41,7 @@ class ConverterTest {
         BigDecimal gbpRate = BigDecimal.ONE;
         Rate usd = new Rate(targetCurrencyCode, "$", "US Dollar");
         BigDecimal usdRate = BigDecimal.valueOf(2L);
-        LocalDate lastUpdated = LocalDate.of(2019, Month.AUGUST, 1);
+        LocalDateTime lastUpdated = LocalDateTime.of(2019, Month.AUGUST, 1, 0, 0);
 
         when(rates.getCurrency(sourceCurrencyCode)).thenReturn(gbp);
         when(rates.getCurrency(targetCurrencyCode)).thenReturn(usd);
@@ -53,7 +53,7 @@ class ConverterTest {
         CurrencySingle target = new CurrencySingle(usd, usdRate);
         CurrencyPair pair = new CurrencyPair(source, target, usdRate);
 
-        ConverterResponse expected = new ConverterResponse(pair, amount, BigDecimal.valueOf(20L), lastUpdated, true);
+        ConverterResponse expected = new ConverterResponse(pair, amount, BigDecimal.valueOf(20L), lastUpdated.toLocalDate(), true);
         ConverterResponse actual = converter.convert(sourceCurrencyCode, targetCurrencyCode, amount);
 
         assertThat(actual, is(expected));

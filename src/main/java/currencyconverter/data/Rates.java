@@ -5,7 +5,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.math.BigDecimal;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Currency;
 import java.util.HashMap;
 import java.util.Map;
@@ -20,13 +20,13 @@ public class Rates {
     private static final int INITIAL_CAPACITY = 32;
     private static final Map<String, Rate> INSTANCES = new ConcurrentHashMap<>(INITIAL_CAPACITY);
     private static final Map<Rate, BigDecimal> RATES = new HashMap<>(INITIAL_CAPACITY);
-    private static LocalDate LAST_UPDATED = LocalDate.now().minusDays(4);
+    private static LocalDateTime LAST_UPDATED = LocalDateTime.now().minusDays(4);
 
-    public LocalDate getLastUpdated() {
+    public LocalDateTime getLastUpdated() {
         return LAST_UPDATED;
     }
 
-    public void setLastUpdated(LocalDate lastUpdated) {
+    public void setLastUpdated(LocalDateTime lastUpdated) {
         LAST_UPDATED = lastUpdated;
     }
 

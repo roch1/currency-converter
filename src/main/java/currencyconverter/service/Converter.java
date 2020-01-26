@@ -46,12 +46,12 @@ public class Converter {
 
     private ConverterResponse valid(CurrencySingle source, CurrencySingle target, BigDecimal requestAmount, BigDecimal convertedAmount) {
         CurrencyPair pair = new CurrencyPair(source, target, getQuotation(requestAmount, convertedAmount));
-        return new ConverterResponse(pair, requestAmount, convertedAmount, rates.getLastUpdated(), true);
+        return new ConverterResponse(pair, requestAmount, convertedAmount, rates.getLastUpdated().toLocalDate(), true);
     }
 
     private ConverterResponse invalid(CurrencySingle source, CurrencySingle target, BigDecimal requestAmount) {
         CurrencyPair pair = new CurrencyPair(source, target, null);
-        return new ConverterResponse(pair, requestAmount, null, rates.getLastUpdated(), false);
+        return new ConverterResponse(pair, requestAmount, null, rates.getLastUpdated().toLocalDate(), false);
     }
 
     private BigDecimal getQuotation(BigDecimal amount, BigDecimal converted) {

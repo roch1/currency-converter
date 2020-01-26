@@ -1,6 +1,7 @@
 package currencyconverter.service;
 
 import currencyconverter.data.Rates;
+import currencyconverter.data.feeds.DataFeedManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -19,11 +20,11 @@ public class RateScheduler {
     private static final ScheduledExecutorService EXECUTOR_SERVICE = Executors.newSingleThreadScheduledExecutor();
 
     private final Rates rates;
-    private final RateGetter rateGetter;
+    private final DataFeedManager dataFeedManager;
 
-    public RateScheduler(Rates rates, RateGetter rateGetter) {
+    public RateScheduler(Rates rates, DataFeedManager dataFeedManager) {
         this.rates = rates;
-        this.rateGetter = rateGetter;
+        this.dataFeedManager = dataFeedManager;
     }
 
     public void startScheduling() {
@@ -32,7 +33,7 @@ public class RateScheduler {
         // rates should be populated as soon application starts up (only once), and then subsequently according to delay
         if (rates.empty()) {
             LOGGER.info("rates data source empty");
-            rateGetter.getRates(rates);
+            dataFeedManager.getRates(rates);
             rates.putRate("EUR", "1"); // add base rate EUR to rates
         }
 
@@ -41,7 +42,7 @@ public class RateScheduler {
 
     private Runnable task() {
         return () -> {
-            rateGetter.getRates(rates);
+            dataFeedManager.getRates(rates);
             scheduleTask(task()); // as part of the task, it should schedule itself to run again
         };
     }
