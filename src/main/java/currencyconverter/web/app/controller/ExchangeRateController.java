@@ -1,8 +1,8 @@
 package currencyconverter.web.app.controller;
 
-import currencyconverter.data.Rates;
+import currencyconverter.data.DataStore;
 import currencyconverter.domain.ConverterResponse;
-import currencyconverter.domain.Rate;
+import currencyconverter.domain.Currency;
 import currencyconverter.service.Converter;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -17,19 +17,19 @@ import java.math.BigDecimal;
 @RequestMapping(path = "/rates", produces = MediaType.APPLICATION_JSON_VALUE)
 public class ExchangeRateController {
 
-    private final Rates rates;
+    private final DataStore datastore;
     private final Converter currencyConverter;
 
-    public ExchangeRateController(Rates rates, Converter currencyConverter) {
-        this.rates = rates;
+    public ExchangeRateController(DataStore datastore, Converter currencyConverter) {
+        this.datastore = datastore;
         this.currencyConverter = currencyConverter;
     }
 
     // @GetMapping for base path /rates
 
     @GetMapping("/{currencyCode}")
-    public Rate rateByCode(@PathVariable("currencyCode") String currencyCode) {
-        return rates.getCurrency(currencyCode);
+    public Currency rateByCode(@PathVariable("currencyCode") String currencyCode) {
+        return datastore.getCurrency(currencyCode);
     }
 
     @GetMapping("/currencypair")

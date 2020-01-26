@@ -1,6 +1,6 @@
 package currencyconverter.web.app.configuration;
 
-import currencyconverter.data.Rates;
+import currencyconverter.data.DataStore;
 import currencyconverter.data.feeds.DataFeed;
 import currencyconverter.data.feeds.EuropeanCentralBank;
 import org.slf4j.Logger;
@@ -20,15 +20,15 @@ public class CurrencyConverterConfiguration {
     private static final Logger LOGGER = LoggerFactory.getLogger(CurrencyConverterConfiguration.class);
 
     @Bean
-    public Rates rates() {
-        LOGGER.info("creating Rates object - should only happen once");
-        return new Rates();
+    public DataStore dataStore() {
+        LOGGER.info("creating Data Store object - should only happen once");
+        return new DataStore();
     }
 
     @Bean
     public Converter converter() {
         LOGGER.info("creating Converter object - should only happen once");
-        return new Converter(rates());
+        return new Converter(dataStore());
     }
 
     @Bean
@@ -40,7 +40,7 @@ public class CurrencyConverterConfiguration {
     @Bean
     public void rateScheduler() {
         LOGGER.info("creating RateScheduler object - should only happen once");
-        RateScheduler rateScheduler = new RateScheduler(rates(), dataFeedManager());
+        RateScheduler rateScheduler = new RateScheduler(dataStore(), dataFeedManager());
         rateScheduler.startScheduling();
     }
 

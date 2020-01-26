@@ -1,6 +1,6 @@
 package currencyconverter.data.feeds;
 
-import currencyconverter.data.Rates;
+import currencyconverter.data.DataStore;
 
 import java.io.File;
 import java.nio.file.Files;
@@ -18,7 +18,7 @@ public abstract class DataFeed {
         this.localFilePath = localFilePath;
     }
 
-    abstract void ingest(File localRatesFile, Rates rates);
+    abstract void ingest(File localRatesFile, DataStore datastore);
     abstract long download(File localRatesFile);
     abstract LocalDateTime lastUpdated();
 

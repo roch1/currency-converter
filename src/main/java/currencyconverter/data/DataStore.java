@@ -1,12 +1,11 @@
 package currencyconverter.data;
 
-import currencyconverter.domain.Rate;
+import currencyconverter.domain.Currency;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.Currency;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -14,12 +13,12 @@ import java.util.concurrent.ConcurrentHashMap;
 
 // Rates could be a singleton? - consider any impact to testing
 
-public class Rates {
+public class DataStore {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(Rates.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(DataStore.class);
     private static final int INITIAL_CAPACITY = 32;
-    private static final Map<String, Rate> INSTANCES = new ConcurrentHashMap<>(INITIAL_CAPACITY);
-    private static final Map<Rate, BigDecimal> RATES = new HashMap<>(INITIAL_CAPACITY);
+    private static final Map<String, Currency> INSTANCES = new ConcurrentHashMap<>(INITIAL_CAPACITY);
+    private static final Map<Currency, BigDecimal> RATES = new HashMap<>(INITIAL_CAPACITY);
     private static LocalDateTime LAST_UPDATED = LocalDateTime.now().minusDays(4);
 
     public LocalDateTime getLastUpdated() {
@@ -38,32 +37,32 @@ public class Rates {
         RATES.put(getCurrency(currencyCode), new BigDecimal(fxRate));
     }
 
-    public Optional<BigDecimal> getFxRate(Rate currency) {
+    public Optional<BigDecimal> getFxRate(Currency currency) {
         return Optional.ofNullable(RATES.get(currency));
     }
 
-    public Rate getCurrency(String currencyCode) {
-        Rate instance = INSTANCES.get(currencyCode);
+    public Currency getCurrency(String currencyCode) {
+        Currency instance = INSTANCES.get(currencyCode);
         if (instance != null) {
             return instance;
         }
 
-        return createRate(currencyCode);
+        return createCurrency(currencyCode);
     }
 
-    private Rate createRate(String currencyCode) {
-        LOGGER.debug("creating rate {}", currencyCode);
+    private Currency createCurrency(String currencyCode) {
+        LOGGER.debug("creating currency {}", currencyCode);
 
-        Rate r;
+        Currency r;
         try {
-            Currency currency = Currency.getInstance(currencyCode);
-            Rate rate = new Rate(currencyCode, currency.getSymbol(), currency.getDisplayName());
-            Rate instance = INSTANCES.putIfAbsent(currencyCode, rate);
+            java.util.Currency currency = java.util.Currency.getInstance(currencyCode);
+            Currency rate = new Currency(currencyCode, currency.getSymbol(), currency.getDisplayName());
+            Currency instance = INSTANCES.putIfAbsent(currencyCode, rate);
             r = instance != null ? instance : rate;
         } catch (IllegalArgumentException e) {
             String invalidCurrCode = "invalid currency code [" + currencyCode + "]";
             LOGGER.error(invalidCurrCode, e);
-            r = new Rate(invalidCurrCode, invalidCurrCode, invalidCurrCode);
+            r = new Currency(invalidCurrCode, invalidCurrCode, invalidCurrCode);
         }
 
         return r;

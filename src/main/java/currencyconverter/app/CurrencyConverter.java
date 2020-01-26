@@ -1,6 +1,6 @@
 package currencyconverter.app;
 
-import currencyconverter.data.Rates;
+import currencyconverter.data.DataStore;
 import currencyconverter.data.feeds.DataFeed;
 import currencyconverter.data.feeds.DataFeedManager;
 import currencyconverter.data.feeds.EuropeanCentralBank;
@@ -11,18 +11,18 @@ import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.List;
 
-public class Runner {
+public class CurrencyConverter {
 
     public static void main(String[] args) {
-        Rates rates = new Rates();
+        DataStore datastore = new DataStore();
 
         List<DataFeed> dataFeeds = Arrays.asList(new EuropeanCentralBank());
         DataFeedManager dataFeedManager = new DataFeedManager(dataFeeds);
 
-        RateScheduler runner = new RateScheduler(rates, dataFeedManager);
+        RateScheduler runner = new RateScheduler(datastore, dataFeedManager);
         runner.startScheduling();
 
-        Converter converter = new Converter(rates);
+        Converter converter = new Converter(datastore);
 
         // test cases
         System.out.println(converter.convert("hjk", "GBP", BigDecimal.TEN));

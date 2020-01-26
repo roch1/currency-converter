@@ -1,6 +1,6 @@
 package currencyconverter.data.feeds;
 
-import currencyconverter.data.Rates;
+import currencyconverter.data.DataStore;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
@@ -71,7 +71,7 @@ public class EuropeanCentralBank extends DataFeed {
     }
 
     @Override
-    void ingest(File localRatesFile, Rates rates) {
+    void ingest(File localRatesFile, DataStore datastore) {
         DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
         try {
             dbf.setFeature("http://apache.org/xml/features/nonvalidating/load-dtd-grammar", false);
@@ -89,7 +89,7 @@ public class EuropeanCentralBank extends DataFeed {
                 if (e.hasAttribute("currency")) {
                     String currencyCode = e.getAttribute("currency");
                     String fxRate = e.getAttribute("rate");
-                    rates.putRate(currencyCode, fxRate);
+                    datastore.putRate(currencyCode, fxRate);
                 }
             }
 

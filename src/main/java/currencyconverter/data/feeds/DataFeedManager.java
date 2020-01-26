@@ -1,6 +1,6 @@
 package currencyconverter.data.feeds;
 
-import currencyconverter.data.Rates;
+import currencyconverter.data.DataStore;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -17,15 +17,15 @@ public class DataFeedManager {
         this.dataFeeds = dataFeeds;
     }
 
-    public void getRates(Rates rates) {
+    public void populateExchangeRateDataStore(DataStore datastore) {
         for (DataFeed dataFeed : dataFeeds) {
             LocalDateTime feedLastUpdated = dataFeed.lastUpdated();
-            if (newRatesPublished(feedLastUpdated, rates.getLastUpdated())) {
+            if (newRatesPublished(feedLastUpdated, datastore.getLastUpdated())) {
                 LOGGER.debug("new rates file published");
                 File ratesFile = dataFeed.createDirs();
                 dataFeed.download(ratesFile);
-                dataFeed.ingest(ratesFile, rates);
-                rates.setLastUpdated(feedLastUpdated);
+                dataFeed.ingest(ratesFile, datastore);
+                datastore.setLastUpdated(feedLastUpdated);
             }
         }
     }

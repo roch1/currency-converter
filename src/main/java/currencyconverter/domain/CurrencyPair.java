@@ -6,11 +6,11 @@ import java.util.Objects;
 // value type
 public final class CurrencyPair {
 
-    private final CurrencySingle base;
-    private final CurrencySingle quote;
+    private final ExchangeRate base;
+    private final ExchangeRate quote;
     private final BigDecimal quotation;
 
-    public CurrencyPair(CurrencySingle base, CurrencySingle quote, BigDecimal quotation) {
+    public CurrencyPair(ExchangeRate base, ExchangeRate quote, BigDecimal quotation) {
         this.base = base;
         this.quote = quote;
         this.quotation = quotation;

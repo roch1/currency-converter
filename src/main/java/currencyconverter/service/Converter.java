@@ -1,10 +1,10 @@
 package currencyconverter.service;
 
-import currencyconverter.data.Rates;
+import currencyconverter.data.DataStore;
 import currencyconverter.domain.ConverterResponse;
+import currencyconverter.domain.Currency;
 import currencyconverter.domain.CurrencyPair;
-import currencyconverter.domain.CurrencySingle;
-import currencyconverter.domain.Rate;
+import currencyconverter.domain.ExchangeRate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -17,16 +17,16 @@ public class Converter {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(Converter.class);
     private static final MathContext MC = new MathContext(10, RoundingMode.HALF_EVEN);
-    private final Rates rates;
+    private final DataStore datastore;
 
-    public Converter(Rates rates) {
-        this.rates = rates;
+    public Converter(DataStore datastore) {
+        this.datastore = datastore;
     }
 
     public ConverterResponse convert(String sourceCurrCode, String targetCurrCode, BigDecimal amount) {
         LOGGER.debug("request: convert {} {} to {}", amount, sourceCurrCode, targetCurrCode);
-        CurrencySingle source = getCurrency(sourceCurrCode);
-        CurrencySingle target = getCurrency(targetCurrCode);
+        ExchangeRate source = getCurrency(sourceCurrCode);
+        ExchangeRate target = getCurrency(targetCurrCode);
 
         if (amount.compareTo(BigDecimal.ONE) < 0) {
             return valid(source, target, amount, BigDecimal.ZERO);
@@ -44,26 +44,26 @@ public class Converter {
         return sourceEurAmount.multiply(targetRate, MC);
     }
 
-    private ConverterResponse valid(CurrencySingle source, CurrencySingle target, BigDecimal requestAmount, BigDecimal convertedAmount) {
+    private ConverterResponse valid(ExchangeRate source, ExchangeRate target, BigDecimal requestAmount, BigDecimal convertedAmount) {
         CurrencyPair pair = new CurrencyPair(source, target, getQuotation(requestAmount, convertedAmount));
-        return new ConverterResponse(pair, requestAmount, convertedAmount, rates.getLastUpdated().toLocalDate(), true);
+        return new ConverterResponse(pair, requestAmount, convertedAmount, datastore.getLastUpdated().toLocalDate(), true);
     }
 
-    private ConverterResponse invalid(CurrencySingle source, CurrencySingle target, BigDecimal requestAmount) {
+    private ConverterResponse invalid(ExchangeRate source, ExchangeRate target, BigDecimal requestAmount) {
         CurrencyPair pair = new CurrencyPair(source, target, null);
-        return new ConverterResponse(pair, requestAmount, null, rates.getLastUpdated().toLocalDate(), false);
+        return new ConverterResponse(pair, requestAmount, null, datastore.getLastUpdated().toLocalDate(), false);
     }
 
     private BigDecimal getQuotation(BigDecimal amount, BigDecimal converted) {
         return converted.divide(amount, MC);
     }
 
-    private CurrencySingle getCurrency(String currencyCode) {
+    private ExchangeRate getCurrency(String currencyCode) {
         // the same CurrencySingle object gets created multiple times a day
-        Rate currency = rates.getCurrency(currencyCode);
-        Optional<BigDecimal> rate = rates.getFxRate(currency);
-        return rate.map(r -> new CurrencySingle(currency, r))
-                .orElseGet(() -> new CurrencySingle(currency, null));
+        Currency currency = datastore.getCurrency(currencyCode);
+        Optional<BigDecimal> rate = datastore.getFxRate(currency);
+        return rate.map(r -> new ExchangeRate(currency, r))
+                .orElseGet(() -> new ExchangeRate(currency, null));
     }
 
 }

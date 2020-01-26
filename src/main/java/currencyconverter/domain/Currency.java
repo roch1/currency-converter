@@ -3,13 +3,13 @@ package currencyconverter.domain;
 import java.util.Objects;
 
 // value type
-public final class Rate {
+public final class Currency {
 
     private final String currencyCode;
     private final String symbol;
     private final String displayName;
 
-    public Rate(String currencyCode, String symbol, String displayName) {
+    public Currency(String currencyCode, String symbol, String displayName) {
         this.currencyCode = currencyCode;
         this.symbol = symbol;
         this.displayName = displayName;
@@ -32,10 +32,10 @@ public final class Rate {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        Rate rate = (Rate) o;
-        return Objects.equals(currencyCode, rate.currencyCode) &&
-                Objects.equals(symbol, rate.symbol) &&
-                Objects.equals(displayName, rate.displayName);
+        Currency currency = (Currency) o;
+        return Objects.equals(currencyCode, currency.currencyCode) &&
+                Objects.equals(symbol, currency.symbol) &&
+                Objects.equals(displayName, currency.displayName);
     }
 
     @Override

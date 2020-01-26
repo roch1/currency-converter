@@ -1,10 +1,10 @@
 package currencyconverter.service;
 
-import currencyconverter.data.Rates;
+import currencyconverter.data.DataStore;
 import currencyconverter.domain.ConverterResponse;
+import currencyconverter.domain.Currency;
 import currencyconverter.domain.CurrencyPair;
-import currencyconverter.domain.CurrencySingle;
-import currencyconverter.domain.Rate;
+import currencyconverter.domain.ExchangeRate;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -21,13 +21,13 @@ import static org.mockito.Mockito.when;
 
 class ConverterTest {
 
-    private Rates rates;
+    private DataStore dataStore;
     private Converter converter;
 
     @BeforeEach
     void setUp() {
-        rates = mock(Rates.class);
-        converter = new Converter(rates);
+        dataStore = mock(DataStore.class);
+        converter = new Converter(dataStore);
     }
 
     @Test
@@ -37,20 +37,20 @@ class ConverterTest {
         String targetCurrencyCode = "USD";
         BigDecimal amount = BigDecimal.TEN;
 
-        Rate gbp = new Rate(sourceCurrencyCode, "£", "British Pound");
+        Currency gbp = new Currency(sourceCurrencyCode, "£", "British Pound");
         BigDecimal gbpRate = BigDecimal.ONE;
-        Rate usd = new Rate(targetCurrencyCode, "$", "US Dollar");
+        Currency usd = new Currency(targetCurrencyCode, "$", "US Dollar");
         BigDecimal usdRate = BigDecimal.valueOf(2L);
         LocalDateTime lastUpdated = LocalDateTime.of(2019, Month.AUGUST, 1, 0, 0);
 
-        when(rates.getCurrency(sourceCurrencyCode)).thenReturn(gbp);
-        when(rates.getCurrency(targetCurrencyCode)).thenReturn(usd);
-        when(rates.getFxRate(gbp)).thenReturn(Optional.of(gbpRate));
-        when(rates.getFxRate(usd)).thenReturn(Optional.of(usdRate));
-        when(rates.getLastUpdated()).thenReturn(lastUpdated);
+        when(dataStore.getCurrency(sourceCurrencyCode)).thenReturn(gbp);
+        when(dataStore.getCurrency(targetCurrencyCode)).thenReturn(usd);
+        when(dataStore.getFxRate(gbp)).thenReturn(Optional.of(gbpRate));
+        when(dataStore.getFxRate(usd)).thenReturn(Optional.of(usdRate));
+        when(dataStore.getLastUpdated()).thenReturn(lastUpdated);
 
-        CurrencySingle source = new CurrencySingle(gbp, gbpRate);
-        CurrencySingle target = new CurrencySingle(usd, usdRate);
+        ExchangeRate source = new ExchangeRate(gbp, gbpRate);
+        ExchangeRate target = new ExchangeRate(usd, usdRate);
         CurrencyPair pair = new CurrencyPair(source, target, usdRate);
 
         ConverterResponse expected = new ConverterResponse(pair, amount, BigDecimal.valueOf(20L), lastUpdated.toLocalDate(), true);

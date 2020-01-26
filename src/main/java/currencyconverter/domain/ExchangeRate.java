@@ -3,17 +3,17 @@ package currencyconverter.domain;
 import java.math.BigDecimal;
 import java.util.Objects;
 
-public final class CurrencySingle {
+public final class ExchangeRate {
 
-    private final Rate currency;
+    private final Currency currency;
     private final BigDecimal rate;
 
-    public CurrencySingle(Rate currency, BigDecimal rate) {
+    public ExchangeRate(Currency currency, BigDecimal rate) {
         this.currency = currency;
         this.rate = rate;
     }
 
-    public Rate getCurrency() {
+    public Currency getCurrency() {
         return currency;
     }
 
@@ -28,7 +28,7 @@ public final class CurrencySingle {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        CurrencySingle that = (CurrencySingle) o;
+        ExchangeRate that = (ExchangeRate) o;
         return Objects.equals(currency, that.currency) &&
                 Objects.equals(rate, that.rate);
     }

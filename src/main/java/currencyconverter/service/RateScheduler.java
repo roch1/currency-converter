@@ -1,6 +1,6 @@
 package currencyconverter.service;
 
-import currencyconverter.data.Rates;
+import currencyconverter.data.DataStore;
 import currencyconverter.data.feeds.DataFeedManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,22 +19,22 @@ public class RateScheduler {
     private static final Logger LOGGER = LoggerFactory.getLogger(RateScheduler.class);
     private static final ScheduledExecutorService EXECUTOR_SERVICE = Executors.newSingleThreadScheduledExecutor();
 
-    private final Rates rates;
+    private final DataStore dataStore;
     private final DataFeedManager dataFeedManager;
 
-    public RateScheduler(Rates rates, DataFeedManager dataFeedManager) {
-        this.rates = rates;
+    public RateScheduler(DataStore dataStore, DataFeedManager dataFeedManager) {
+        this.dataStore = dataStore;
         this.dataFeedManager = dataFeedManager;
     }
 
     public void startScheduling() {
-        LOGGER.info("starting rate scheduler (should happen on application start-up only)");
+        LOGGER.info("starting scheduler (should happen on application start-up only)");
 
         // rates should be populated as soon application starts up (only once), and then subsequently according to delay
-        if (rates.empty()) {
-            LOGGER.info("rates data source empty");
-            dataFeedManager.getRates(rates);
-            rates.putRate("EUR", "1"); // add base rate EUR to rates
+        if (dataStore.empty()) {
+            LOGGER.info("data source is empty");
+            dataFeedManager.populateExchangeRateDataStore(dataStore);
+            dataStore.putRate("EUR", "1"); // add base rate EUR to rates
         }
 
         scheduleTask(task());
@@ -42,7 +42,7 @@ public class RateScheduler {
 
     private Runnable task() {
         return () -> {
-            dataFeedManager.getRates(rates);
+            dataFeedManager.populateExchangeRateDataStore(dataStore);
             scheduleTask(task()); // as part of the task, it should schedule itself to run again
         };
     }
