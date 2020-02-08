@@ -11,7 +11,7 @@ import java.time.LocalDateTime;
 public abstract class DataFeed {
 
     private final String name;
-    private final String localFilePath; // what
+    private final String localFilePath;
 
     public DataFeed(String name, String localFilePath) {
         this.name = name;

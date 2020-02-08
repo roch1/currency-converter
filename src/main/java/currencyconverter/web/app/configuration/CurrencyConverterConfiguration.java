@@ -3,11 +3,12 @@ package currencyconverter.web.app.configuration;
 import currencyconverter.data.DataStore;
 import currencyconverter.data.feeds.DataFeed;
 import currencyconverter.data.feeds.EuropeanCentralBank;
+import currencyconverter.service.ConversionManager;
+import currencyconverter.service.CurrencyConverter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import currencyconverter.service.Converter;
 import currencyconverter.data.feeds.DataFeedManager;
 import currencyconverter.service.RateScheduler;
 
@@ -26,9 +27,9 @@ public class CurrencyConverterConfiguration {
     }
 
     @Bean
-    public Converter converter() {
+    public ConversionManager converter() {
         LOGGER.info("creating Converter object - should only happen once");
-        return new Converter(dataStore());
+        return new ConversionManager(dataStore(), new CurrencyConverter());
     }
 
     @Bean

@@ -11,7 +11,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 
-// Rates could be a singleton? - consider any impact to testing
+// could be a singleton? - consider any impact to testing
 
 public class DataStore {
 

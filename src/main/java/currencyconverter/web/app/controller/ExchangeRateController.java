@@ -3,7 +3,8 @@ package currencyconverter.web.app.controller;
 import currencyconverter.data.DataStore;
 import currencyconverter.domain.ConverterResponse;
 import currencyconverter.domain.Currency;
-import currencyconverter.service.Converter;
+import currencyconverter.service.ConversionManager;
+import currencyconverter.service.CurrencyConverter;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -18,11 +19,11 @@ import java.math.BigDecimal;
 public class ExchangeRateController {
 
     private final DataStore datastore;
-    private final Converter currencyConverter;
+    private final ConversionManager conversionManager;
 
-    public ExchangeRateController(DataStore datastore, Converter currencyConverter) {
+    public ExchangeRateController(DataStore datastore, ConversionManager conversionManager) {
         this.datastore = datastore;
-        this.currencyConverter = currencyConverter;
+        this.conversionManager = conversionManager;
     }
 
     // @GetMapping for base path /rates
@@ -34,13 +35,13 @@ public class ExchangeRateController {
 
     @GetMapping("/currencypair")
     public ConverterResponse currencyPair(@RequestParam(name = "base") String baseCurrCode, @RequestParam(name = "quote") String quoteCurrCode) {
-        return currencyConverter.convert(baseCurrCode, quoteCurrCode, BigDecimal.ONE);
+        return conversionManager.convertCurrency(baseCurrCode, quoteCurrCode, BigDecimal.ONE);
     }
 
     @GetMapping("/conversion")
     public ConverterResponse conversion(@RequestParam(name = "base") String baseCurrCode, @RequestParam(name = "quote") String quoteCurrCode,
                                    @RequestParam(name = "amount") BigDecimal amount) {
-        return currencyConverter.convert(baseCurrCode, quoteCurrCode, amount);
+        return conversionManager.convertCurrency(baseCurrCode, quoteCurrCode, amount);
     }
 
 }
