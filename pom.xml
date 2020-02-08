@@ -8,7 +8,7 @@
     <artifactId>currency-conversion-calculator</artifactId>
     <version>1.0-SNAPSHOT</version>
     <packaging>jar</packaging>
-    <name>currency-converter</name>
+    <name>currency-currencyConverter</name>
 
     <properties>
         <main.class>currencyconverter.web.app.CurrencyConverterApplication</main.class>
@@ -16,7 +16,7 @@
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <maven.compiler.version>3.8.1</maven.compiler.version>
         <maven.surefire.version>3.0.0-M3</maven.surefire.version>
-        <spring-boot.version>2.1.6.RELEASE</spring-boot.version>
+        <spring-boot.version>2.2.4.RELEASE</spring-boot.version>
         <java.version>11</java.version>
     </properties>
 
