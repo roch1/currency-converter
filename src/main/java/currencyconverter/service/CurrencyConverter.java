@@ -19,6 +19,7 @@ public class CurrencyConverter {
     }
 
     public BigDecimal getQuotation(BigDecimal amount, BigDecimal converted) {
+        // this could be saved back into the data store if it doesn't exist
         return converted.divide(amount, MC);
     }
 

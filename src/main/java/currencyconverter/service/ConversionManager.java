@@ -14,11 +14,11 @@ import java.util.Optional;
 public class ConversionManager {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ConversionManager.class);
-    private final DataStore datastore;
+    private final DataStore dataStore;
     private final CurrencyConverter currencyConverter;
 
     public ConversionManager(DataStore dataStore, CurrencyConverter currencyConverter) {
-        this.datastore = dataStore;
+        this.dataStore = dataStore;
         this.currencyConverter = currencyConverter;
     }
 
@@ -40,18 +40,18 @@ public class ConversionManager {
     private ConverterResponse valid(ExchangeRate source, ExchangeRate target, BigDecimal requestAmount, BigDecimal convertedAmount) {
         BigDecimal quotation = currencyConverter.getQuotation(requestAmount, convertedAmount);
         CurrencyPair pair = new CurrencyPair(source, target, quotation);
-        return new ConverterResponse(pair, requestAmount, convertedAmount, datastore.getLastUpdated().toLocalDate(), true);
+        return new ConverterResponse(pair, requestAmount, convertedAmount, dataStore.getLastUpdated().toLocalDate(), true);
     }
 
     private ConverterResponse invalid(ExchangeRate source, ExchangeRate target, BigDecimal requestAmount) {
         CurrencyPair pair = new CurrencyPair(source, target, null);
-        return new ConverterResponse(pair, requestAmount, null, datastore.getLastUpdated().toLocalDate(), false);
+        return new ConverterResponse(pair, requestAmount, null, dataStore.getLastUpdated().toLocalDate(), false);
     }
 
     private ExchangeRate getCurrency(String currencyCode) {
         // the same CurrencySingle object gets created multiple times a day
-        Currency currency = datastore.getCurrency(currencyCode);
-        Optional<BigDecimal> rate = datastore.getFxRate(currency);
+        Currency currency = dataStore.getCurrency(currencyCode);
+        Optional<BigDecimal> rate = dataStore.getFxRate(currency);
         return rate.map(r -> new ExchangeRate(currency, r))
                 .orElseGet(() -> new ExchangeRate(currency, null));
     }

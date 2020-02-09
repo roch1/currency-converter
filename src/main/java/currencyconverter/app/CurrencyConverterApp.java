@@ -28,6 +28,9 @@ public class CurrencyConverterApp {
         System.out.println(conversionManager.convertCurrency("hjk", "GBP", BigDecimal.TEN));
         System.out.println(conversionManager.convertCurrency("USD", "GBP", BigDecimal.TEN));
         System.out.println(conversionManager.convertCurrency("USd", "GbP", BigDecimal.TEN));
+        System.out.println(conversionManager.convertCurrency("GBP", "USD", BigDecimal.TEN));
+        System.out.println(conversionManager.convertCurrency("GBP", "EUR", BigDecimal.TEN));
+        System.out.println(conversionManager.convertCurrency("EUR", "GBP", BigDecimal.TEN));
         System.out.println(conversionManager.convertCurrency(null, null, null));
         System.out.println(conversionManager.convertCurrency("USD", "JPY", BigDecimal.ZERO));
 
