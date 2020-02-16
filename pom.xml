@@ -8,7 +8,7 @@
     <artifactId>currency-conversion-calculator</artifactId>
     <version>1.0-SNAPSHOT</version>
     <packaging>jar</packaging>
-    <name>currency-currencyConverter</name>
+    <name>currency-converter</name>
 
     <properties>
         <main.class>currencyconverter.web.app.CurrencyConverterApplication</main.class>
