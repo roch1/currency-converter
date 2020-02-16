@@ -1,4 +1,4 @@
-package currencyconverter.data;
+package currencyconverter.service;
 
 import currencyconverter.domain.Currency;
 import org.slf4j.Logger;
@@ -7,8 +7,10 @@ import org.slf4j.LoggerFactory;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 // could be a singleton? - consider any impact to testing
@@ -39,6 +41,14 @@ public class DataStore {
 
     public Optional<BigDecimal> getFxRate(Currency currency) {
         return Optional.ofNullable(RATES.get(currency));
+    }
+
+    public Set<Map.Entry<Currency, BigDecimal>> selectAll() {
+        return new HashSet<>(RATES.entrySet()); // return new set so datastore cannot be modified outside of this class
+    }
+
+    public Currency baseCurrency() {
+        return getCurrency("EUR");
     }
 
     public Currency getCurrency(String currencyCode) {
