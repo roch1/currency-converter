@@ -1,6 +1,5 @@
 package currencyconverter.service;
 
-import currencyconverter.data.DataStore;
 import currencyconverter.data.feeds.DataFeedManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

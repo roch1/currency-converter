@@ -1,6 +1,5 @@
 package currencyconverter.service;
 
-import currencyconverter.data.DataStore;
 import currencyconverter.domain.ConverterResponse;
 import currencyconverter.domain.Currency;
 import currencyconverter.domain.CurrencyPair;

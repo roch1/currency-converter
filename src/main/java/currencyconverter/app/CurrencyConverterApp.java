@@ -1,6 +1,6 @@
 package currencyconverter.app;
 
-import currencyconverter.data.DataStore;
+import currencyconverter.service.DataStore;
 import currencyconverter.data.feeds.DataFeed;
 import currencyconverter.data.feeds.DataFeedManager;
 import currencyconverter.data.feeds.EuropeanCentralBank;

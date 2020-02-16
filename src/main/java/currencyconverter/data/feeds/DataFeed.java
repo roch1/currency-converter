@@ -1,6 +1,6 @@
 package currencyconverter.data.feeds;
 
-import currencyconverter.data.DataStore;
+import currencyconverter.service.DataStore;
 
 import java.io.File;
 import java.nio.file.Files;
