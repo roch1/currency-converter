@@ -1,10 +1,11 @@
 package currencyconverter.web.app.configuration;
 
-import currencyconverter.data.DataStore;
+import currencyconverter.service.DataStore;
 import currencyconverter.data.feeds.DataFeed;
 import currencyconverter.data.feeds.EuropeanCentralBank;
 import currencyconverter.service.ConversionManager;
 import currencyconverter.service.CurrencyConverter;
+import currencyconverter.web.app.service.ExchangeRateService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Bean;
@@ -27,8 +28,8 @@ public class CurrencyConverterConfiguration {
     }
 
     @Bean
-    public ConversionManager converter() {
-        LOGGER.info("creating Converter object - should only happen once");
+    public ConversionManager conversionManager() {
+        LOGGER.info("creating Conversion Manager object - should only happen once");
         return new ConversionManager(dataStore(), new CurrencyConverter());
     }
 
@@ -48,6 +49,12 @@ public class CurrencyConverterConfiguration {
     @Bean
     public List<DataFeed> dataFeeds() {
         return Arrays.asList(new EuropeanCentralBank());
+    }
+
+    @Bean
+    public ExchangeRateService exchangeRateService() {
+        LOGGER.info("creating Exchange Rate Service object - should only happen once");
+        return new ExchangeRateService(dataStore(), conversionManager());
     }
 
 }
