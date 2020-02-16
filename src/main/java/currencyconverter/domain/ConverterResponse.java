@@ -20,6 +20,26 @@ public class ConverterResponse {
         this.valid = valid;
     }
 
+    public CurrencyPair getPair() {
+        return pair;
+    }
+
+    public BigDecimal getRequestAmount() {
+        return requestAmount;
+    }
+
+    public BigDecimal getConvertedAmount() {
+        return convertedAmount;
+    }
+
+    public LocalDate getLastUpdated() {
+        return lastUpdated;
+    }
+
+    public boolean isValid() {
+        return valid;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

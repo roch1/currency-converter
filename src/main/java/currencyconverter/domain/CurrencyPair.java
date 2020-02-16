@@ -16,6 +16,18 @@ public final class CurrencyPair {
         this.quotation = quotation;
     }
 
+    public ExchangeRate getBase() {
+        return base;
+    }
+
+    public ExchangeRate getQuote() {
+        return quote;
+    }
+
+    public BigDecimal getQuotation() {
+        return quotation;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
