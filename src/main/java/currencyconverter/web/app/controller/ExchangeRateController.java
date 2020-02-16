@@ -1,47 +1,46 @@
 package currencyconverter.web.app.controller;
 
-import currencyconverter.data.DataStore;
 import currencyconverter.domain.ConverterResponse;
 import currencyconverter.domain.Currency;
-import currencyconverter.service.ConversionManager;
-import currencyconverter.service.CurrencyConverter;
-import org.springframework.http.MediaType;
+import currencyconverter.web.app.model.ExchangeRateModel;
+import currencyconverter.web.app.service.ExchangeRateService;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.math.BigDecimal;
 
 @RestController
-@RequestMapping(path = "/rates", produces = MediaType.APPLICATION_JSON_VALUE)
 public class ExchangeRateController {
 
-    private final DataStore datastore;
-    private final ConversionManager conversionManager;
+    private final ExchangeRateService exchangeRateService;
 
-    public ExchangeRateController(DataStore datastore, ConversionManager conversionManager) {
-        this.datastore = datastore;
-        this.conversionManager = conversionManager;
+    public ExchangeRateController(ExchangeRateService exchangeRateService) {
+        this.exchangeRateService = exchangeRateService;
     }
 
-    // @GetMapping for base path /rates
+    @RequestMapping(method = RequestMethod.GET, path = "/latest")
+    public ExchangeRateModel latest() {
+        return exchangeRateService.getLatestRates();
+    }
 
     @GetMapping("/{currencyCode}")
     public Currency rateByCode(@PathVariable("currencyCode") String currencyCode) {
-        return datastore.getCurrency(currencyCode);
+        return exchangeRateService.getCurrency(currencyCode);
     }
 
     @GetMapping("/currencypair")
     public ConverterResponse currencyPair(@RequestParam(name = "base") String baseCurrCode, @RequestParam(name = "quote") String quoteCurrCode) {
-        return conversionManager.convertCurrency(baseCurrCode, quoteCurrCode, BigDecimal.ONE);
+        return exchangeRateService.convertCurrency(baseCurrCode, quoteCurrCode, BigDecimal.ONE);
     }
 
     @GetMapping("/conversion")
     public ConverterResponse conversion(@RequestParam(name = "base") String baseCurrCode, @RequestParam(name = "quote") String quoteCurrCode,
                                    @RequestParam(name = "amount") BigDecimal amount) {
-        return conversionManager.convertCurrency(baseCurrCode, quoteCurrCode, amount);
+        return exchangeRateService.convertCurrency(baseCurrCode, quoteCurrCode, amount);
     }
 
 }
