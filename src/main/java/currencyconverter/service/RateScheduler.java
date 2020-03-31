@@ -1,6 +1,5 @@
 package currencyconverter.service;
 
-import currencyconverter.data.feeds.DataFeedManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -32,7 +31,7 @@ public class RateScheduler {
         // rates should be populated as soon application starts up (only once), and then subsequently according to delay
         if (dataStore.empty()) {
             LOGGER.info("data source is empty");
-            dataFeedManager.populateExchangeRateDataStore(dataStore);
+            dataFeedManager.populateExchangeRateDataStore();
             dataStore.putRate("EUR", "1"); // add base rate EUR to rates
         }
 
@@ -41,7 +40,7 @@ public class RateScheduler {
 
     private Runnable task() {
         return () -> {
-            dataFeedManager.populateExchangeRateDataStore(dataStore);
+            dataFeedManager.populateExchangeRateDataStore();
             scheduleTask(task()); // as part of the task, it should schedule itself to run again
         };
     }

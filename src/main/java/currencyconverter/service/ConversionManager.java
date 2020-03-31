@@ -14,9 +14,9 @@ public class ConversionManager {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ConversionManager.class);
     private final DataStore dataStore;
-    private final CurrencyConverter currencyConverter;
+    private final Converter currencyConverter;
 
-    public ConversionManager(DataStore dataStore, CurrencyConverter currencyConverter) {
+    public ConversionManager(DataStore dataStore, Converter currencyConverter) {
         this.dataStore = dataStore;
         this.currencyConverter = currencyConverter;
     }
