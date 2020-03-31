@@ -1,20 +1,24 @@
 package currencyconverter.web.app.configuration;
 
-import currencyconverter.service.DataStore;
+import currencyconverter.concurrent.CurrencyConverterThreadFactory;
+import currencyconverter.http.CurrencyConverterHttpClient;
+import currencyconverter.concurrent.CurrencyConverterThreadPool;
 import currencyconverter.data.feeds.DataFeed;
 import currencyconverter.data.feeds.EuropeanCentralBank;
 import currencyconverter.service.ConversionManager;
-import currencyconverter.service.CurrencyConverter;
-import currencyconverter.web.app.service.ExchangeRateService;
+import currencyconverter.service.Converter;
+import currencyconverter.service.DataFeedManager;
+import currencyconverter.service.DataStore;
+import currencyconverter.service.RateScheduler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import currencyconverter.data.feeds.DataFeedManager;
-import currencyconverter.service.RateScheduler;
 
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.TimeUnit;
 
 @Configuration
 public class CurrencyConverterConfiguration {
@@ -30,13 +34,7 @@ public class CurrencyConverterConfiguration {
     @Bean
     public ConversionManager conversionManager() {
         LOGGER.info("creating Conversion Manager object - should only happen once");
-        return new ConversionManager(dataStore(), new CurrencyConverter());
-    }
-
-    @Bean
-    public DataFeedManager dataFeedManager() {
-        LOGGER.info("creating Data Feed Manager object - should only happen once");
-        return new DataFeedManager(dataFeeds());
+        return new ConversionManager(dataStore(), new Converter());
     }
 
     @Bean
@@ -46,15 +44,17 @@ public class CurrencyConverterConfiguration {
         rateScheduler.startScheduling();
     }
 
-    @Bean
-    public List<DataFeed> dataFeeds() {
-        return Arrays.asList(new EuropeanCentralBank());
+    private List<DataFeed> dataFeeds() {
+        LOGGER.info("creating Data Feeds - should only happen once");
+        CurrencyConverterThreadFactory threadFactory = new CurrencyConverterThreadFactory("EcbDfPool-");
+        CurrencyConverterThreadPool threadPool = new CurrencyConverterThreadPool(2, 4, 0L, TimeUnit.MILLISECONDS, new LinkedBlockingQueue<>(), threadFactory);
+        CurrencyConverterHttpClient currencyConverterHttpClient = new CurrencyConverterHttpClient(threadPool);
+        return Collections.singletonList(new EuropeanCentralBank(dataStore(), currencyConverterHttpClient));
     }
 
-    @Bean
-    public ExchangeRateService exchangeRateService() {
-        LOGGER.info("creating Exchange Rate Service object - should only happen once");
-        return new ExchangeRateService(dataStore(), conversionManager());
+    private DataFeedManager dataFeedManager() {
+        LOGGER.info("creating Data Feed Manager object - should only happen once");
+        return new DataFeedManager(dataFeeds());
     }
 
 }

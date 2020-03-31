@@ -5,11 +5,13 @@ import currencyconverter.domain.Currency;
 import currencyconverter.service.ConversionManager;
 import currencyconverter.service.DataStore;
 import currencyconverter.web.app.model.ExchangeRateModel;
+import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.Map;
 
+@Service
 public class ExchangeRateService {
 
     private final DataStore datastore;
