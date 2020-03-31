@@ -7,12 +7,13 @@ import java.math.BigDecimal;
 import java.math.MathContext;
 import java.math.RoundingMode;
 
-public class CurrencyConverter {
+public class Converter {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(CurrencyConverter.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(Converter.class);
     private static final MathContext MC = new MathContext(10, RoundingMode.HALF_EVEN);
 
     public BigDecimal convert(BigDecimal sourceRate, BigDecimal targetRate, BigDecimal amount) {
+        LOGGER.debug("converting amount {} using source rate {} and target rate {}", amount, sourceRate, targetRate);
         BigDecimal sourceEurRate = BigDecimal.ONE.divide(sourceRate, MC);
         BigDecimal sourceEurAmount = amount.multiply(sourceEurRate, MC);
         return sourceEurAmount.multiply(targetRate, MC);
