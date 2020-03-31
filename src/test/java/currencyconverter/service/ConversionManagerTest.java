@@ -21,13 +21,13 @@ import static org.mockito.Mockito.when;
 class ConversionManagerTest {
 
     private DataStore dataStore;
-    private CurrencyConverter currencyConverter;
+    private Converter currencyConverter;
     private ConversionManager conversionManager;
 
     @BeforeEach
     void setUp() {
         dataStore = mock(DataStore.class);
-        currencyConverter = mock(CurrencyConverter.class);
+        currencyConverter = mock(Converter.class);
         conversionManager = new ConversionManager(dataStore, currencyConverter);
     }
 
